@@ -42,7 +42,7 @@ claude plugin install waybill@waybill-ge
 Sign-in is OAuth. The plugin contains no API keys, tokens or passwords.
 
 1. After installing, run `/mcp` in Claude Code, select `waybill` and
-   choose **Authenticate**. You can also run `claude mcp login waybill`
+   choose **Authenticate**. You can also run `claude mcp login plugin:waybill:waybill`
    from a terminal.
 2. Your browser opens waybill.ge. Sign in with your email (a one-time
    code) and approve access.
