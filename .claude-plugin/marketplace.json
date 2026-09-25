@@ -1,0 +1,29 @@
+{
+  "name": "waybill-ge",
+  "owner": {
+    "name": "waybill.ge",
+    "email": "hello@waybill.ge",
+    "url": "https://waybill.ge"
+  },
+  "metadata": {
+    "description": "The waybill.ge plugin for Claude Code: RS.GE e-waybills and read-only Balance.ge accounting for businesses in Georgia."
+  },
+  "plugins": [
+    {
+      "name": "waybill",
+      "source": "./",
+      "description": "Connect Claude to your company's financial systems in Georgia: issue and track RS.GE e-waybills and ask read-only questions about your Balance.ge accounting, in plain language.",
+      "version": "0.1.0",
+      "author": {
+        "name": "waybill.ge",
+        "email": "hello@waybill.ge",
+        "url": "https://waybill.ge"
+      },
+      "homepage": "https://waybill.ge",
+      "repository": "https://github.com/sepivip/waybill-claude-plugin",
+      "license": "MIT",
+      "keywords": ["georgia", "rs.ge", "waybill", "accounting", "balance.ge", "tax", "finance"],
+      "category": "business"
+    }
+  ]
+}
