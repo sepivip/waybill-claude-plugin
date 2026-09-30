@@ -37,10 +37,9 @@ Offer to change the draft instead.
 
 Never ask the user to type an RS.GE or Balance.ge password, service
 user password or API key into the conversation, and do not repeat one
-if they paste it. Credentials belong in the waybill.ge dashboard:
-
-- RS.GE: https://waybill.ge/dashboard/connect
-- Balance.ge: https://waybill.ge/dashboard/connect-balance
+if they paste it. Credentials belong in the waybill.ge dashboard, under
+Business integrations: https://waybill.ge/dashboard/integrations
+(RS.GE and Balance.ge companies are connected and managed there).
 
 If a tool reports missing or wrong credentials, point the user to the
 dashboard page instead.
@@ -49,3 +48,8 @@ dashboard page instead.
 
 The Balance.ge tools only read data. Nothing is ever posted to or
 changed in the user's ledger, so no confirmation is needed for them.
+
+If `balance_list_companies` marks a company `needs_repair: true`, do
+not pass its label to any other Balance tool and do not run
+`balance_check_credentials` on it. Tell the user to disconnect it and
+connect the right company again under Business integrations.
