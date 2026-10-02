@@ -1,8 +1,8 @@
 {
   "name": "waybill",
   "displayName": "waybill.ge",
-  "version": "0.1.2",
-  "description": "Connect Claude to your company's financial systems in Georgia: issue and track RS.GE e-waybills and ask read-only questions about your Balance.ge accounting, in plain language.",
+  "version": "0.2.0",
+  "description": "Connect Claude to your company's financial systems in Georgia: issue and track RS.GE e-waybills and e-invoices and ask read-only questions about your Balance.ge accounting, in plain language.",
   "author": {
     "name": "waybill.ge",
     "email": "hello@waybill.ge",

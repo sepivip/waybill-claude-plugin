@@ -1,6 +1,6 @@
 ---
 name: waybill-safety
-description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices or Balance.ge). Show a waybill draft and get an explicit yes before activate_waybill, close_waybill, confirm_waybill or save_invoice_from_waybill, and never ask for RS.GE or Balance.ge passwords in chat.
+description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices or Balance.ge). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, confirm_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, and never ask for RS.GE or Balance.ge passwords in chat.
 ---
 
 # waybill.ge safety
@@ -20,6 +20,13 @@ in their latest message:
 - `confirm_waybill`: accepts a waybill another company issued to you.
 - `save_invoice_from_waybill`: creates an RS.GE invoice from a waybill,
   or changes an existing one when an invoice id is given.
+- `send_invoice`: sends a saved e-invoice (advance or regular) to the
+  buyer. RS.GE gives it its series and number; it cannot be unsent.
+- `attach_advance_invoice`: offsets an advance invoice's VAT against a
+  supply invoice, which changes the VAT that invoice charges.
+- `save_advance_invoice` or `save_supply_invoice` with a non-zero
+  `invoice_id`: rewrites an existing saved invoice and replaces all its
+  lines.
 
 `cancel_waybill` and `reject_waybill` are also final: confirm them the
 same way.
@@ -29,6 +36,13 @@ draft (buyer name and TIN, route, goods, quantities, prices, total,
 transport details and the draft id) and ask whether to activate it.
 Do not treat an earlier general request ("issue a waybill to X") as
 approval to activate: ask again once the draft exists.
+
+For a new e-invoice, call `save_advance_invoice` (a prepayment) or
+`save_supply_invoice` (a delivery) with no `invoice_id` first. Show the
+saved draft (buyer name and TIN, operation month, lines, amount and VAT,
+invoice id) and ask whether to send it. To complete an advance, find it
+with `list_attachable_advance_invoices`, save the supply invoice, then
+ask before `attach_advance_invoice` and again before `send_invoice`.
 
 If the user says anything other than a clear yes, do not call the tool.
 Offer to change the draft instead.

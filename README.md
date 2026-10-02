@@ -2,8 +2,8 @@
 
 The financial connector for businesses in Georgia. This plugin connects
 Claude Code to [waybill.ge](https://waybill.ge), so you can issue and
-track RS.GE e-waybills and ask read-only questions about your Balance.ge
-accounting in plain language.
+track RS.GE e-waybills and e-invoices and ask read-only questions about
+your Balance.ge accounting in plain language.
 
 ## What it does
 
@@ -11,15 +11,20 @@ accounting in plain language.
   activate them after you confirm, list issued and received waybills
   with totals, close delivered waybills, confirm or reject incoming
   ones, and create invoices from waybills.
+- **RS.GE e-invoices:** issue an advance invoice for a prepayment or a
+  regular invoice without a waybill, send it to the buyer after you
+  confirm, and complete an advance by offsetting its VAT against the
+  final invoice.
 - **Balance.ge accounting (read-only):** clients and vendors, items,
   stock levels, prices, who owes you and whom you owe, the general
   ledger and monthly cash flow. Nothing is ever posted to your ledger.
 
 The plugin adds one remote MCP server, `waybill`, at
 `https://waybill.ge/mcp`, and a small `waybill-safety` skill. The skill
-has Claude show you a waybill draft and wait for an explicit yes before
-any binding RS.GE action (activate, close, confirm, create invoice), and
-never ask for your RS.GE or Balance.ge passwords in chat.
+has Claude show you a waybill or e-invoice draft and wait for an
+explicit yes before any binding RS.GE action (activate, close, confirm,
+create invoice, send an e-invoice, offset an advance), and never ask for
+your RS.GE or Balance.ge passwords in chat.
 
 ## Install
 
@@ -79,6 +84,14 @@ New accounts start with a free trial. Plans and limits:
 
    > In Balance, who owes us money right now, and what is our cash flow
    > so far this month?
+
+5. **Advance invoice for a prepayment**
+
+   > Issue an advance invoice to TIN 111111111 for September: 1180 GEL
+   > including VAT, "advance for consulting services".
+
+   Claude saves the invoice as a draft, shows it to you and sends it to
+   the buyer only after your yes.
 
 ## Links
 

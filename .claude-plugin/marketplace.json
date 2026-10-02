@@ -6,14 +6,14 @@
     "url": "https://waybill.ge"
   },
   "metadata": {
-    "description": "The waybill.ge plugin for Claude Code: RS.GE e-waybills and read-only Balance.ge accounting for businesses in Georgia."
+    "description": "The waybill.ge plugin for Claude Code: RS.GE e-waybills, e-invoices and read-only Balance.ge accounting for businesses in Georgia."
   },
   "plugins": [
     {
       "name": "waybill",
       "source": "./",
-      "description": "Connect Claude to your company's financial systems in Georgia: issue and track RS.GE e-waybills and ask read-only questions about your Balance.ge accounting, in plain language.",
-      "version": "0.1.1",
+      "description": "Connect Claude to your company's financial systems in Georgia: issue and track RS.GE e-waybills and e-invoices and ask read-only questions about your Balance.ge accounting, in plain language.",
+      "version": "0.2.0",
       "author": {
         "name": "waybill.ge",
         "email": "hello@waybill.ge",
