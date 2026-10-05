@@ -26,6 +26,9 @@ explicit yes before any binding RS.GE action (activate, close, confirm,
 create invoice, send an e-invoice, offset an advance), and never ask for
 your RS.GE or Balance.ge passwords in chat.
 
+It carries the selected company's label through related calls and
+checks uncertain write results before any retry.
+
 ## Install
 
 In Claude Code:

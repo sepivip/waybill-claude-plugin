@@ -12,7 +12,7 @@ Service (RS.GE). Some of them cannot be undone.
 
 Before you call any of these tools, show the user exactly what will
 happen and wait for an explicit "yes" (or an equally clear instruction)
-in their latest message:
+for those targets and effects:
 
 - `activate_waybill`: sends the draft to RS.GE and makes it legally
   effective. It can later be cancelled, never returned to draft.
@@ -46,6 +46,29 @@ ask before `attach_advance_invoice` and again before `send_invoice`.
 
 If the user says anything other than a clear yes, do not call the tool.
 Offer to change the draft instead.
+
+## Choose the company
+
+Use labels returned by `list_rs_companies` for RS.GE and
+`balance_list_companies` for Balance.ge. These are separate label sets.
+Carry the user's chosen company through related calls and identify it
+in the draft and action summary. If the current tools return several
+RS.GE companies, pass `company` explicitly on every write; when the
+target is unclear, ask before writing. A document id does not choose
+the company, and a read's default company is not permission to write.
+
+An explicit instruction already given for displayed targets and effects
+is sufficient. If the company, draft, amount or effect changes, confirm
+the changed action. A general request to issue an unseen draft still
+does not authorize activation or sending.
+
+## Uncertain writes
+
+After a timeout, `SAVE_UNVERIFIED` or another ambiguous write result,
+do not repeat the write automatically. Read the returned document id
+with `get_waybill` or `get_invoice` first. If no id or reliable state
+is available, have the user check RS.GE before retrying. An `over_offset`
+result needs correction in RS.GE; do not send that invoice.
 
 ## Never ask for passwords in chat
 
