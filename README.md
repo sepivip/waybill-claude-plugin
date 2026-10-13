@@ -59,7 +59,7 @@ Sign-in is OAuth. The plugin contains no API keys, tokens or passwords.
 3. In the waybill.ge dashboard, connect your RS.GE service user and,
    if you use them, your Balance.ge companies and QuickShipper accounts.
    These credentials are stored encrypted on waybill.ge (for QuickShipper
-   only the login token it issues) and never reach Claude.
+   only the login token QuickShipper issues) and never reach Claude.
 
 New accounts start with a free trial. Plans and limits:
 [waybill.ge](https://waybill.ge/#pricing).
