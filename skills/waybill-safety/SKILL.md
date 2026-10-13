@@ -1,6 +1,6 @@
 ---
 name: waybill-safety
-description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices or Balance.ge). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, confirm_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, and never ask for RS.GE or Balance.ge passwords in chat.
+description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge or QuickShipper). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, confirm_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, treat QuickShipper quotes as prices rather than bookings, and never ask for RS.GE, Balance.ge or QuickShipper passwords in chat.
 ---
 
 # waybill.ge safety
@@ -49,11 +49,12 @@ Offer to change the draft instead.
 
 ## Never ask for passwords in chat
 
-Never ask the user to type an RS.GE or Balance.ge password, service
-user password or API key into the conversation, and do not repeat one
-if they paste it. Credentials belong in the waybill.ge dashboard, under
-Business integrations: https://waybill.ge/dashboard/integrations
-(RS.GE and Balance.ge companies are connected and managed there).
+Never ask the user to type an RS.GE, Balance.ge or QuickShipper
+password, service user password or API key into the conversation, and do
+not repeat one if they paste it. Credentials belong in the waybill.ge
+dashboard, under Business integrations:
+https://waybill.ge/dashboard/integrations (RS.GE and Balance.ge companies
+and QuickShipper accounts are connected and managed there).
 
 If a tool reports missing or wrong credentials, point the user to the
 dashboard page instead.
@@ -67,3 +68,19 @@ If `balance_list_companies` marks a company `needs_repair: true`, do
 not pass its label to any other Balance tool and do not run
 `balance_check_credentials` on it. Tell the user to disconnect it and
 connect the right company again under Business integrations.
+
+## QuickShipper is read-only
+
+The QuickShipper tools only read. `quickshipper_get_delivery_quote`
+prices a route; it does not book a courier, and nothing is created,
+changed or cancelled at QuickShipper, so no confirmation is needed.
+
+- A quote needs both street addresses with their cities and both
+  points' coordinates. If you do not have the coordinates, ask the user
+  for a map pin or the coordinates; do not guess them. Prices are live
+  and change, so say a quote is not a booking.
+- `quickshipper_list_orders` takes Tbilisi calendar dates (YYYY-MM-DD,
+  both included) and one status. To count orders, read `total` instead
+  of paging through every page.
+- If a QuickShipper connection needs a new login (`REAUTH_REQUIRED`),
+  point the user to Business integrations to update it.
