@@ -2,8 +2,9 @@
 
 The financial connector for businesses in Georgia. This plugin connects
 Claude Code to [waybill.ge](https://waybill.ge), so you can issue and
-track RS.GE e-waybills and e-invoices and ask read-only questions about
-your Balance.ge accounting in plain language.
+track RS.GE e-waybills and e-invoices, and ask read-only questions about
+your Balance.ge accounting and your QuickShipper deliveries, in plain
+language.
 
 ## What it does
 
@@ -18,13 +19,17 @@ your Balance.ge accounting in plain language.
 - **Balance.ge accounting (read-only):** clients and vendors, items,
   stock levels, prices, who owes you and whom you owe, the general
   ledger and monthly cash flow. Nothing is ever posted to your ledger.
+- **QuickShipper deliveries (read-only):** live delivery quotes for a
+  route, your recent orders by date or status, and one order's status
+  history and tracking link. Nothing is booked, changed or cancelled.
 
 The plugin adds one remote MCP server, `waybill`, at
 `https://waybill.ge/mcp`, and a small `waybill-safety` skill. The skill
 has Claude show you a waybill or e-invoice draft and wait for an
 explicit yes before any binding RS.GE action (activate, close, confirm,
-create invoice, send an e-invoice, offset an advance), and never ask for
-your RS.GE or Balance.ge passwords in chat.
+create invoice, send an e-invoice, offset an advance), treat QuickShipper
+quotes as prices rather than bookings, and never ask for your RS.GE,
+Balance.ge or QuickShipper passwords in chat.
 
 ## Install
 
@@ -52,8 +57,9 @@ Sign-in is OAuth. The plugin contains no API keys, tokens or passwords.
 2. Your browser opens waybill.ge. Sign in with your email (a one-time
    code) and approve access.
 3. In the waybill.ge dashboard, connect your RS.GE service user and,
-   if you use it, your Balance.ge companies. These passwords are stored
-   encrypted on waybill.ge and never reach Claude.
+   if you use them, your Balance.ge companies and QuickShipper accounts.
+   These credentials are stored encrypted on waybill.ge (for QuickShipper
+   only the login token QuickShipper issues) and never reach Claude.
 
 New accounts start with a free trial. Plans and limits:
 [waybill.ge](https://waybill.ge/#pricing).
@@ -93,6 +99,13 @@ New accounts start with a free trial. Plans and limits:
    Claude saves the invoice as a draft, shows it to you and sends it to
    the buyer only after your yes.
 
+6. **QuickShipper orders this month**
+
+   > How many QuickShipper orders did we send this month, and how many
+   > were cancelled?
+
+   Claude reads the counts from QuickShipper; nothing is booked or changed.
+
 ## Links
 
 - Documentation: <https://waybill.ge/developers>
@@ -103,4 +116,4 @@ New accounts start with a free trial. Plans and limits:
 
 [MIT](LICENSE).
 
-waybill.ge is not affiliated with rs.ge or Balance.ge.
+waybill.ge is not affiliated with rs.ge, Balance.ge or QuickShipper.
