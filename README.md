@@ -3,8 +3,8 @@
 The financial connector for businesses in Georgia. This plugin connects
 Claude Code to [waybill.ge](https://waybill.ge), so you can issue and
 track RS.GE e-waybills and e-invoices, and ask read-only questions about
-your Balance.ge accounting and your QuickShipper deliveries, in plain
-language.
+your Balance.ge or 1C (OneSoft) accounting and your QuickShipper
+deliveries, in plain language.
 
 ## What it does
 
@@ -22,14 +22,20 @@ language.
 - **QuickShipper deliveries (read-only):** live delivery quotes for a
   route, your recent orders by date or status, and one order's status
   history and tracking link. Nothing is booked, changed or cancelled.
+- **1C accounting (read-only):** your own 1C publication (for example one
+  hosted by OneSoft): items, customers and suppliers, a counterparty's
+  contracts, stock, prices, receivables and payables, cash, exchange
+  rates, one document's lines, account turnovers and the trial balance.
+  Nothing is created, changed or posted in 1C.
 
 The plugin adds one remote MCP server, `waybill`, at
 `https://waybill.ge/mcp`, and a small `waybill-safety` skill. The skill
 has Claude show you a waybill or e-invoice draft and wait for an
 explicit yes before any binding RS.GE action (activate, close, confirm,
 create invoice, send an e-invoice, offset an advance), treat QuickShipper
-quotes as prices rather than bookings, and never ask for your RS.GE,
-Balance.ge or QuickShipper passwords in chat.
+quotes as prices rather than bookings, keep slow 1C trial balance windows
+narrow, and never ask for your RS.GE, Balance.ge, QuickShipper or 1C
+passwords in chat.
 
 ## Install
 
@@ -57,9 +63,12 @@ Sign-in is OAuth. The plugin contains no API keys, tokens or passwords.
 2. Your browser opens waybill.ge. Sign in with your email (a one-time
    code) and approve access.
 3. In the waybill.ge dashboard, connect your RS.GE service user and,
-   if you use them, your Balance.ge companies and QuickShipper accounts.
-   These credentials are stored encrypted on waybill.ge (for QuickShipper
-   only the login token QuickShipper issues) and never reach Claude.
+   if you use them, your Balance.ge companies, QuickShipper accounts and
+   1C publications (with a dedicated read-only 1C user; the
+   [1C setup guide](https://waybill.ge/dashboard/integrations/onesoft/setup)
+   lists the one-time steps inside 1C). These credentials are stored
+   encrypted on waybill.ge (for QuickShipper only the login token
+   QuickShipper issues) and never reach Claude.
 
 New accounts start with a free trial. Plans and limits:
 [waybill.ge](https://waybill.ge/#pricing).
@@ -106,6 +115,14 @@ New accounts start with a free trial. Plans and limits:
 
    Claude reads the counts from QuickShipper; nothing is booked or changed.
 
+7. **A customer's contracts and debt in 1C**
+
+   > In 1C, which contracts does our customer Vake Market have, and how
+   > much do they owe us on each?
+
+   Claude finds the customer, lists its contracts and reads the
+   receivable per contract. Nothing is posted in 1C.
+
 ## Links
 
 - Documentation: <https://waybill.ge/developers>
@@ -116,4 +133,5 @@ New accounts start with a free trial. Plans and limits:
 
 [MIT](LICENSE).
 
-waybill.ge is not affiliated with rs.ge, Balance.ge or QuickShipper.
+waybill.ge is not affiliated with rs.ge, Balance.ge, QuickShipper, OneSoft
+or 1C.
