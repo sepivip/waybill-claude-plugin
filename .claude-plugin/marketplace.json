@@ -6,14 +6,14 @@
     "url": "https://waybill.ge"
   },
   "metadata": {
-    "description": "The waybill.ge plugin for Claude Code: RS.GE e-waybills and e-invoices, read-only Balance.ge accounting and read-only QuickShipper deliveries for businesses in Georgia."
+    "description": "The waybill.ge plugin for Claude Code: RS.GE e-waybills and e-invoices, read-only Balance.ge and 1C (OneSoft) accounting and read-only QuickShipper deliveries for businesses in Georgia."
   },
   "plugins": [
     {
       "name": "waybill",
       "source": "./",
-      "description": "Connect Claude to your company's financial systems in Georgia: issue and track RS.GE e-waybills and e-invoices, and ask read-only questions about your Balance.ge accounting and QuickShipper deliveries, in plain language.",
-      "version": "0.3.0",
+      "description": "Connect Claude to your company's financial systems in Georgia: issue and track RS.GE e-waybills and e-invoices, and ask read-only questions about your Balance.ge or 1C (OneSoft) accounting and QuickShipper deliveries, in plain language.",
+      "version": "0.4.0",
       "author": {
         "name": "waybill.ge",
         "email": "hello@waybill.ge",
@@ -22,7 +22,7 @@
       "homepage": "https://waybill.ge",
       "repository": "https://github.com/sepivip/waybill-claude-plugin",
       "license": "MIT",
-      "keywords": ["georgia", "rs.ge", "waybill", "accounting", "balance.ge", "quickshipper", "delivery", "tax", "finance"],
+      "keywords": ["georgia", "rs.ge", "waybill", "accounting", "balance.ge", "1c", "onesoft", "quickshipper", "delivery", "tax", "finance"],
       "category": "business"
     }
   ]

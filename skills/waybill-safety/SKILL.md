@@ -1,6 +1,6 @@
 ---
 name: waybill-safety
-description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge or QuickShipper). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, confirm_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, treat QuickShipper quotes as prices rather than bookings, and never ask for RS.GE, Balance.ge or QuickShipper passwords in chat.
+description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper or 1C (OneSoft)). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, confirm_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, and never ask for RS.GE, Balance.ge, QuickShipper or 1C passwords in chat.
 ---
 
 # waybill.ge safety
@@ -49,12 +49,13 @@ Offer to change the draft instead.
 
 ## Never ask for passwords in chat
 
-Never ask the user to type an RS.GE, Balance.ge or QuickShipper
+Never ask the user to type an RS.GE, Balance.ge, QuickShipper or 1C
 password, service user password or API key into the conversation, and do
 not repeat one if they paste it. Credentials belong in the waybill.ge
 dashboard, under Business integrations:
-https://waybill.ge/dashboard/integrations (RS.GE and Balance.ge companies
-and QuickShipper accounts are connected and managed there).
+https://waybill.ge/dashboard/integrations (RS.GE and Balance.ge companies,
+QuickShipper accounts and 1C publications are connected and managed
+there).
 
 If a tool reports missing or wrong credentials, point the user to the
 dashboard page instead.
@@ -84,3 +85,26 @@ changed or cancelled at QuickShipper, so no confirmation is needed.
   of paging through every page.
 - If a QuickShipper connection needs a new login (`REAUTH_REQUIRED`),
   point the user to Business integrations to update it.
+
+## 1C (OneSoft) is read-only
+
+The `onesoft_*` tools only read the user's own 1C publication. Nothing
+is created, changed, posted or unposted in 1C, so no confirmation is
+needed. Pass a label from `onesoft_list_connections` as `connection`
+when the user has more than one.
+
+- `onesoft_trial_balance` can take minutes: 1C adds up the whole ledger
+  for the window first. Ask for the narrowest window that answers the
+  question (a week where you can), tell the user it may take a while, and
+  do not retry a slow call in a loop. `balanced: false` is a finding
+  about the ledger, not an error; report it with the figures.
+- `onesoft_list_contracts` needs one counterparty's `ref_key` from
+  `onesoft_list_clients` or `onesoft_list_vendors`. Its rows may be
+  trading points or delivery routes rather than signed agreements.
+- In 1C balances `advances` is negative and `net` is `debt + advances`;
+  never subtract advances from debt.
+- If `onesoft_check_connection` reports `NOT_PUBLISHED` or
+  `CONTENT_EMPTY`, a 1C administrator has a one-time step to do: point
+  them to https://waybill.ge/dashboard/integrations/onesoft/setup. For
+  `REAUTH_REQUIRED`, the user updates the 1C login under Business
+  integrations.
