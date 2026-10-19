@@ -3,8 +3,8 @@
 The financial connector for businesses in Georgia. This plugin connects
 Claude Code to [waybill.ge](https://waybill.ge), so you can issue and
 track RS.GE e-waybills and e-invoices, and ask read-only questions about
-your Balance.ge or 1C (OneSoft) accounting and your QuickShipper
-deliveries, in plain language.
+your Balance.ge or 1C (OneSoft) accounting, your QuickShipper deliveries
+and your Bank of Georgia accounts, in plain language.
 
 ## What it does
 
@@ -27,6 +27,11 @@ deliveries, in plain language.
   contracts, stock, prices, receivables and payables, cash, exchange
   rates, one document's lines, account turnovers and the trial balance.
   Nothing is created, changed or posted in 1C.
+- **Bank of Georgia accounts (read-only):** current balances,
+  transactions filtered by direction, counterparty, amount or payment
+  purpose, and period totals with daily balances, for the accounts you
+  choose. waybill.ge cannot make payments or transfers, or sign anything
+  at the bank.
 
 The plugin adds one remote MCP server, `waybill`, at
 `https://waybill.ge/mcp`, and a small `waybill-safety` skill. The skill
@@ -34,8 +39,9 @@ has Claude show you a waybill or e-invoice draft and wait for an
 explicit yes before any binding RS.GE action (activate, close, confirm,
 create invoice, send an e-invoice, offset an advance), treat QuickShipper
 quotes as prices rather than bookings, keep slow 1C trial balance windows
-narrow, and never ask for your RS.GE, Balance.ge, QuickShipper or 1C
-passwords in chat.
+narrow, treat the Bank of Georgia tools as read-only, and never ask for your
+RS.GE, Balance.ge, QuickShipper or 1C passwords or your Bank of Georgia
+API key in chat.
 
 ## Install
 
@@ -63,15 +69,22 @@ Sign-in is OAuth. The plugin contains no API keys, tokens or passwords.
 2. Your browser opens waybill.ge. Sign in with your email (a one-time
    code) and approve access.
 3. In the waybill.ge dashboard, connect your RS.GE service user and,
-   if you use them, your Balance.ge companies, QuickShipper accounts and
+   if you use them, your Balance.ge companies, QuickShipper accounts,
    1C publications (with a dedicated read-only 1C user; the
    [1C setup guide](https://waybill.ge/dashboard/integrations/onesoft/setup)
-   lists the one-time steps inside 1C). These credentials are stored
-   encrypted on waybill.ge (for QuickShipper only the login token
-   QuickShipper issues) and never reach Claude.
+   lists the one-time steps inside 1C) and Bank of Georgia accounts.
+   For the bank, you create a Business Online API client (Client
+   Credentials Flow) for waybill.ge and choose the accounts Claude may
+   read; the Bank of Georgia section of
+   [Business integrations](https://waybill.ge/dashboard/integrations#bog)
+   opens the connect page with the step-by-step guide. These credentials
+   are stored encrypted on waybill.ge (for QuickShipper only the login
+   token QuickShipper issues) and never reach Claude. Disconnecting a
+   bank connection deletes its API key from waybill.ge.
 
 New accounts start with a free trial. Plans and limits:
-[waybill.ge](https://waybill.ge/#pricing).
+[waybill.ge](https://waybill.ge/#pricing). How many Bank of Georgia
+connections you can add depends on your plan.
 
 ## Example prompts
 
@@ -123,6 +136,14 @@ New accounts start with a free trial. Plans and limits:
    Claude finds the customer, lists its contracts and reads the
    receivable per contract. Nothing is posted in 1C.
 
+8. **Bank of Georgia balances and last week's money in and out**
+
+   > What is the balance on our Bank of Georgia accounts, and how much
+   > came in and went out of the GEL account last week?
+
+   Claude reads the balances and the GEL account's statement summary.
+   Nothing is paid, transferred or signed at the bank.
+
 ## Links
 
 - Documentation: <https://waybill.ge/developers>
@@ -133,5 +154,5 @@ New accounts start with a free trial. Plans and limits:
 
 [MIT](LICENSE).
 
-waybill.ge is not affiliated with rs.ge, Balance.ge, QuickShipper, OneSoft
-or 1C.
+waybill.ge is not affiliated with rs.ge, Balance.ge, QuickShipper, OneSoft,
+1C or Bank of Georgia.
