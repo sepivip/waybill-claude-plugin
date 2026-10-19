@@ -1,6 +1,6 @@
 ---
 name: waybill-safety
-description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper or 1C (OneSoft)). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, confirm_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, and never ask for RS.GE, Balance.ge, QuickShipper or 1C passwords in chat.
+description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft) or Bank of Georgia). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, confirm_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the Bank of Georgia tools only read and never move money, and never ask for RS.GE, Balance.ge, QuickShipper or 1C passwords or Bank of Georgia API keys in chat.
 ---
 
 # waybill.ge safety
@@ -50,12 +50,14 @@ Offer to change the draft instead.
 ## Never ask for passwords in chat
 
 Never ask the user to type an RS.GE, Balance.ge, QuickShipper or 1C
-password, service user password or API key into the conversation, and do
-not repeat one if they paste it. Credentials belong in the waybill.ge
+password, service user password or API key, or a Bank of Georgia
+Business Online client ID or secret, into the conversation, and do not
+repeat one if they paste it. Credentials belong in the waybill.ge
 dashboard, under Business integrations:
 https://waybill.ge/dashboard/integrations (RS.GE and Balance.ge companies,
-QuickShipper accounts and 1C publications are connected and managed
-there).
+QuickShipper accounts, 1C publications and Bank of Georgia connections
+are connected and managed there; the bank's section is
+https://waybill.ge/dashboard/integrations#bog).
 
 If a tool reports missing or wrong credentials, point the user to the
 dashboard page instead.
@@ -69,6 +71,33 @@ If `balance_list_companies` marks a company `needs_repair: true`, do
 not pass its label to any other Balance tool and do not run
 `balance_check_credentials` on it. Tell the user to disconnect it and
 connect the right company again under Business integrations.
+
+## Bank of Georgia is read-only
+
+The `bank_*` tools only read the balances and statements of the Bank of
+Georgia accounts the user selected in the dashboard. They never move
+money: nothing is paid, transferred or signed at the bank, and no tool
+can do it, so never offer to. No confirmation is needed for them.
+
+- The user never pastes Business Online keys in chat. The client ID and
+  secret of the Business Online API client go on the dashboard connect
+  page (https://waybill.ge/dashboard/integrations#bog, then Bank of
+  Georgia, Connect), which has the step-by-step guide. If the user pastes
+  one anyway, do not repeat it; point them to that page.
+- Pass a label from `bank_list_connections` as `connection` when the
+  user has more than one. `bank_list_transactions` and
+  `bank_statement_summary` read one selected account over at most 31
+  days. Transaction amounts are positive; `direction` gives the sign.
+- The statement summary never covers today. When it returns
+  `covered_to` and a `note`, use `bank_list_transactions` for the
+  missing days. `truncated: true` means the list is incomplete; follow
+  its `hint`.
+- `REAUTH_REQUIRED` means Bank of Georgia no longer accepts the saved API
+  key: the user updates it under Business integrations. A connection with
+  `accounts: []` cannot be read until the user adds an account there.
+- Disconnecting deletes the key from waybill.ge but does not revoke it at
+  the bank. To end it there, the user deletes the API client in Business
+  Online.
 
 ## QuickShipper is read-only
 
