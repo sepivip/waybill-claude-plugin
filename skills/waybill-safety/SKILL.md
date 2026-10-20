@@ -137,3 +137,17 @@ when the user has more than one.
   them to https://waybill.ge/dashboard/integrations/onesoft/setup. For
   `REAUTH_REQUIRED`, the user updates the 1C login under Business
   integrations.
+
+## When a tool call fails
+
+- `SERVICE_UNAVAILABLE` with `retryable: true` (or an HTTP 503):
+  waybill.ge could not reach its own database for a moment, and nothing
+  was sent to RS.GE or any connected service. Retry once after a few
+  seconds (`retry_after_seconds` when given). Do not ask the user to
+  reconnect.
+- `INTERNAL_ERROR`: an unexpected error on waybill.ge. Give the user its
+  `request_id` for support. Before repeating a binding action (activate,
+  close, confirm, send), check the document's current state: the first
+  attempt may already have reached RS.GE.
+- Ask the user to reconnect waybill.ge only when the host reports an
+  authentication failure (HTTP 401), never for the errors above.
