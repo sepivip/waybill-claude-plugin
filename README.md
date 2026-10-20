@@ -82,7 +82,8 @@ Sign-in is OAuth. The plugin contains no API keys, tokens or passwords.
    token QuickShipper issues) and never reach Claude. Disconnecting a
    bank connection deletes its API key from waybill.ge.
 
-New accounts start with a free trial. Plans and limits:
+New accounts start on the Free plan: 300 actions a month, every tool,
+no end date. Plans and limits:
 [waybill.ge](https://waybill.ge/#pricing). How many Bank of Georgia
 connections you can add depends on your plan.
 
