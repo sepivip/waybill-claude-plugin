@@ -1,7 +1,7 @@
 {
   "name": "waybill",
   "displayName": "waybill.ge",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Connect Claude to your company's financial systems in Georgia: issue and track RS.GE e-waybills and e-invoices, and ask read-only questions about your Balance.ge or 1C (OneSoft) accounting, QuickShipper deliveries and Bank of Georgia accounts, in plain language.",
   "author": {
     "name": "waybill.ge",
