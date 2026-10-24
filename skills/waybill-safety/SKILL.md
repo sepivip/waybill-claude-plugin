@@ -1,6 +1,6 @@
 ---
 name: waybill-safety
-description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft) or Bank of Georgia). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, confirm_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the Bank of Georgia tools only read and never move money, and never ask for RS.GE, Balance.ge, QuickShipper or 1C passwords or Bank of Georgia API keys in chat.
+description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, confirm_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the Bank of Georgia tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper or 1C passwords or Bank of Georgia API keys in chat.
 ---
 
 # waybill.ge safety
@@ -137,6 +137,31 @@ when the user has more than one.
   them to https://waybill.ge/dashboard/integrations/onesoft/setup. For
   `REAUTH_REQUIRED`, the user updates the 1C login under Business
   integrations.
+
+## The public registry and NBG rates are read-only
+
+The `napr_company_lookup`, `napr_lien_check`, `napr_property_lookup` and
+`nbg_exchange_rates` tools only read public sources: Georgia's National
+Agency of Public Registry (NAPR) and the National Bank of Georgia (NBG).
+They need no connection or company label, and no confirmation.
+
+- They look up companies and property, never people. They take a legal
+  entity's 9-digit identification code (the same number as its RS.GE
+  TIN), part of its registered name in Georgian script, a cadastral code
+  or an application's registration number, and they refuse personal ID
+  numbers. Do not offer to search for a person.
+- Look up one counterparty at a time; these tools are not for bulk
+  checks.
+- `SERVICE_UNAVAILABLE` from these tools means the public source did not
+  answer, is paused after a captcha, or the account made too many
+  registry lookups in a minute. Say so and offer to try again later
+  (`retry_after_seconds` when given). Never report a status, "no liens"
+  or a rate you did not receive.
+- An NBG `rate` is GEL per `quantity` units (AMD per 1000, JPY per 100),
+  so use `rate_per_unit` for one unit. On a weekend or holiday
+  `valid_from` shows the earlier set in force. These are official
+  reference rates, not a bank's buy or sell rates; attribute them to the
+  National Bank of Georgia.
 
 ## When a tool call fails
 
