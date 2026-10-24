@@ -2,9 +2,10 @@
 
 The financial connector for businesses in Georgia. This plugin connects
 Claude Code to [waybill.ge](https://waybill.ge), so you can issue and
-track RS.GE e-waybills and e-invoices, and ask read-only questions about
+track RS.GE e-waybills and e-invoices, ask read-only questions about
 your Balance.ge or 1C (OneSoft) accounting, your QuickShipper deliveries
-and your Bank of Georgia accounts, in plain language.
+and your Bank of Georgia accounts, and check companies in the public
+registry and the official NBG exchange rates, in plain language.
 
 ## What it does
 
@@ -32,6 +33,13 @@ and your Bank of Georgia accounts, in plain language.
   purpose, and period totals with daily balances, for the accounts you
   choose. waybill.ge cannot make payments or transfers, or sign anything
   at the bank.
+- **Public registry and NBG rates (read-only):** check a Georgian
+  company in the National Agency of Public Registry (NAPR): its status
+  and legal form, the liens recorded against it, and the registration
+  applications for a property by cadastral code. Get the National Bank
+  of Georgia's official exchange rates for any day. These read public
+  sources and need no connection. They look up companies and property,
+  not people.
 
 The plugin adds one remote MCP server, `waybill`, at
 `https://waybill.ge/mcp`, and a small `waybill-safety` skill. The skill
@@ -39,9 +47,10 @@ has Claude show you a waybill or e-invoice draft and wait for an
 explicit yes before any binding RS.GE action (activate, close, confirm,
 create invoice, send an e-invoice, offset an advance), treat QuickShipper
 quotes as prices rather than bookings, keep slow 1C trial balance windows
-narrow, treat the Bank of Georgia tools as read-only, and never ask for your
-RS.GE, Balance.ge, QuickShipper or 1C passwords or your Bank of Georgia
-API key in chat.
+narrow, treat the Bank of Georgia tools as read-only, never search the
+public registry for people or report a guess when a public source is
+down, and never ask for your RS.GE, Balance.ge, QuickShipper or 1C
+passwords or your Bank of Georgia API key in chat.
 
 ## Install
 
@@ -145,6 +154,16 @@ connections you can add depends on your plan.
    Claude reads the balances and the GEL account's statement summary.
    Nothing is paid, transferred or signed at the bank.
 
+9. **Check a new customer in the public registry, and today's USD rate**
+
+   > Before I invoice a new customer, check in the public registry that
+   > their company is active and has no liens, and give me today's
+   > official NBG rate for USD.
+
+   Claude looks the company up by its 9-digit identification code (the
+   same number as its TIN), checks its liens and reads the National Bank
+   of Georgia's rate. No connection is needed for these lookups.
+
 ## Links
 
 - Documentation: <https://waybill.ge/developers>
@@ -156,4 +175,5 @@ connections you can add depends on your plan.
 [MIT](LICENSE).
 
 waybill.ge is not affiliated with rs.ge, Balance.ge, QuickShipper, OneSoft,
-1C or Bank of Georgia.
+1C, Bank of Georgia, the National Agency of Public Registry or the National
+Bank of Georgia.
