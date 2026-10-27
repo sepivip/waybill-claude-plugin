@@ -1,6 +1,6 @@
 ---
 name: waybill-safety
-description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, confirm_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the Bank of Georgia tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper or 1C passwords or Bank of Georgia API keys in chat.
+description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, send_waybill_to_transporter, confirm_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the Bank of Georgia tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper or 1C passwords or Bank of Georgia API keys in chat.
 ---
 
 # waybill.ge safety
@@ -17,6 +17,10 @@ in their latest message:
 - `activate_waybill`: sends the draft to RS.GE and makes it legally
   effective. It can later be cancelled, never returned to draft.
 - `close_waybill`: marks the goods as delivered.
+- `send_waybill_to_transporter`: forwards a carrier draft (transport
+  type 7) to its transporter company, which then adds its own driver
+  and vehicle, activates the waybill and later closes it. It may not be
+  reversible.
 - `confirm_waybill`: accepts a waybill another company issued to you.
 - `save_invoice_from_waybill`: creates an RS.GE invoice from a waybill,
   or changes an existing one when an invoice id is given.
@@ -36,6 +40,19 @@ draft (buyer name and TIN, route, goods, quantities, prices, total,
 transport details and the draft id) and ask whether to activate it.
 Do not treat an earlier general request ("issue a waybill to X") as
 approval to activate: ask again once the draft exists.
+
+When a transporter company (for example a 3PL) carries the goods, save
+a carrier draft instead: `save_waybill_draft` with `transport_type` 7
+and the transporter's `transporter_tin`, on type 1 or type 2 only, and
+leave `vehicle`, `driver_tin`, `driver_name` and `trans_txt` empty.
+Show the draft with the transporter's name and TIN and ask whether to
+send it to that transporter, saying it may not be reversible. Only
+after a clear yes, call `send_waybill_to_transporter`. Never call
+`activate_waybill` or `close_waybill` on a carrier waybill: the
+transporter does both, and the tools refuse. `get_waybill` and
+`list_seller_waybills` show its `transporter_state`. If a save or send
+returns `SAVE_UNVERIFIED`, tell the user what the message says and
+check the waybill with `get_waybill` before doing anything else.
 
 For a new e-invoice, call `save_advance_invoice` (a prepayment) or
 `save_supply_invoice` (a delivery) with no `invoice_id` first. Show the
