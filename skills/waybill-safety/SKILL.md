@@ -88,13 +88,23 @@ can do it, so never offer to. No confirmation is needed for them.
   user has more than one. `bank_list_transactions` and
   `bank_statement_summary` read one selected account over at most 31
   days. Transaction amounts are positive; `direction` gives the sign.
-- The statement summary never covers today. When it returns
-  `covered_to` and a `note`, use `bank_list_transactions` for the
-  missing days. `truncated: true` means the list is incomplete; follow
-  its `hint`.
-- `REAUTH_REQUIRED` means Bank of Georgia no longer accepts the saved API
-  key: the user updates it under Business integrations. A connection with
+- Each transaction has `amount_gel`, the amount in lari (`fx_source`
+  says whether it is the bank's own figure or the National Bank of
+  Georgia's rate for the day), and a `type`: incoming_transfer,
+  outgoing_transfer, fee, currency_conversion, card, cash, tax, salary,
+  internal_transfer or other.
+- What a bank's statements can do is in `capabilities` from
+  `bank_list_connections`. Bank of Georgia's statement summary does not
+  cover today: when it returns `covered_to` and a `note`, use
+  `bank_list_transactions` for the missing days. `truncated: true` means
+  the list is incomplete; follow its `hint`.
+- `NEEDS_RECONNECT` (with `legacy_code` `REAUTH_REQUIRED` when the key
+  was refused) means Bank of Georgia no longer accepts the saved API key,
+  or the connection was disconnected: the user updates the key or
+  connects again under Business integrations. A connection with
   `accounts: []` cannot be read until the user adds an account there.
+  `NOT_HELD_CURRENCY` means no selected account holds that currency; the
+  message lists the currencies that are held.
 - Disconnecting deletes the key from waybill.ge but does not revoke it at
   the bank. To end it there, the user deletes the API client in Business
   Online.
