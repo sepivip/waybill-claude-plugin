@@ -122,6 +122,10 @@ can do it, so never offer to. No confirmation is needed for them.
   `accounts: []` cannot be read until the user adds an account there.
   `NOT_HELD_CURRENCY` means no selected account holds that currency; the
   message lists the currencies that are held.
+- In bank transactions a person's 11-digit personal ID number is masked
+  to its last 3 digits (`********123`) in names, payment texts and TINs,
+  and a counterparty name is only the company or payee. Never try to recover or guess a personal ID, and never
+  ask the user for one.
 - Disconnecting deletes the key from waybill.ge but does not revoke it at
   the bank. To end it there, the user deletes the API client in Business
   Online.

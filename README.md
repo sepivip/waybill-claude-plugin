@@ -100,6 +100,11 @@ no end date. Plans and limits:
 [waybill.ge](https://waybill.ge/#pricing). How many Bank of Georgia
 connections you can add depends on your plan.
 
+When waybill.ge's tools change, the server asks Claude Code to fetch the
+tool list again. If the tools still look outdated after an update (an old
+parameter default or description), run `/mcp`, select `waybill` and
+reconnect, or start a new session.
+
 ## Example prompts
 
 1. **Check RS.GE credentials**
