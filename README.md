@@ -10,12 +10,13 @@ registry and the official NBG exchange rates, in plain language.
 ## What it does
 
 - **RS.GE e-waybills:** look up counterparties by TIN, draft waybills,
-  activate them after you confirm, list issued and received waybills
-  with totals, close delivered waybills, confirm or reject incoming
-  ones, and create invoices from waybills. When a transporter company
-  carries the goods, draft a carrier waybill and send it to the
-  transporter after you confirm; the transporter adds its own driver
-  and vehicle.
+  activate them after you confirm, find issued and received waybills by
+  buyer or supplier, date, amount or text in the comment (such as an
+  order number), with totals, or read one by the number printed on it.
+  Close delivered waybills, confirm or reject incoming ones, and create
+  invoices from waybills. When a transporter company carries the goods,
+  draft a carrier waybill and send it to the transporter after you
+  confirm; the transporter adds its own driver and vehicle.
 - **RS.GE e-invoices:** find invoices you issued or received by
   counterparty, date, RS.GE number or amount, issue an advance invoice
   for a prepayment or a regular invoice without a waybill, send it to

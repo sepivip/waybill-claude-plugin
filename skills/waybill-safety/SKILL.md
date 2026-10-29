@@ -38,6 +38,9 @@ same way.
 For a new waybill, always call `save_waybill_draft` first. Show the
 draft (buyer name and TIN, route, goods, quantities, prices, total,
 transport details and the draft id) and ask whether to activate it.
+Show the buyer and driver names the result returns: RS.GE stores the
+registered name of a checked TIN, and a `notice` says when it differs
+from the name sent.
 Do not treat an earlier general request ("issue a waybill to X") as
 approval to activate: ask again once the draft exists.
 
@@ -70,12 +73,15 @@ To find an e-invoice, call `list_invoices` with what you know: the
 counterparty's TIN or name, the RS.GE number, dates or the amount. Then
 read the row with `get_invoice` and its `invoice_id`, or pass the
 printed series and number (for example `ეა-86 5655835`) to `get_invoice`
-directly. Find waybills with `list_seller_waybills` or
-`list_buyer_waybills`. Never step through ids one by one: each call is
-a separate RS.GE request, so it takes many minutes and loads RS.GE for
-every waybill.ge customer. After 20 lookups in 10 minutes that find
-nothing, waybill.ge pauses that tool. If a search finds nothing, widen
-the dates or ask the user.
+directly. For the number printed on a waybill (for example
+`0793384115`), pass it to `get_waybill` as `number`, as a string. Find
+other waybills with `list_seller_waybills` or `list_buyer_waybills`:
+`comment` finds an order number or other text in the comment, and on
+received waybills `seller_tin` is the supplier. Never step through ids
+one by one: each call is a separate RS.GE request, so it takes many
+minutes and loads RS.GE for every waybill.ge customer. After 20 lookups
+in 10 minutes that find nothing, waybill.ge pauses that tool. If a
+search finds nothing, widen the dates or ask the user.
 
 ## Never ask for passwords in chat
 
