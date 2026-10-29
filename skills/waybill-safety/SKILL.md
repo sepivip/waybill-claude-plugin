@@ -1,6 +1,6 @@
 ---
 name: waybill-safety
-description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, send_waybill_to_transporter, confirm_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the Bank of Georgia tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper or 1C passwords or Bank of Georgia API keys in chat.
+description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, send_waybill_to_transporter, confirm_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, find e-invoices with list_invoices instead of stepping through ids, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the Bank of Georgia tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper or 1C passwords or Bank of Georgia API keys in chat.
 ---
 
 # waybill.ge safety
@@ -63,6 +63,17 @@ ask before `attach_advance_invoice` and again before `send_invoice`.
 
 If the user says anything other than a clear yes, do not call the tool.
 Offer to change the draft instead.
+
+## Find invoices and waybills with the list tools
+
+To find an e-invoice, call `list_invoices` with what you know: the
+counterparty's TIN or name, the RS.GE number, dates or the amount. Then
+read the row with `get_invoice` and its `invoice_id`, or pass the
+printed series and number (for example `ეა-86 5655835`) to `get_invoice`
+directly. Find waybills with `list_seller_waybills` or
+`list_buyer_waybills`. Never step through ids one by one: every call
+uses one action of the account's monthly allowance. If a search finds
+nothing, widen the dates or ask the user.
 
 ## Never ask for passwords in chat
 
