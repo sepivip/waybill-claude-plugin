@@ -71,9 +71,11 @@ counterparty's TIN or name, the RS.GE number, dates or the amount. Then
 read the row with `get_invoice` and its `invoice_id`, or pass the
 printed series and number (for example `ეა-86 5655835`) to `get_invoice`
 directly. Find waybills with `list_seller_waybills` or
-`list_buyer_waybills`. Never step through ids one by one: every call
-uses one action of the account's monthly allowance. If a search finds
-nothing, widen the dates or ask the user.
+`list_buyer_waybills`. Never step through ids one by one: each call is
+a separate RS.GE request, so it takes many minutes and loads RS.GE for
+every waybill.ge customer. After 20 lookups in 10 minutes that find
+nothing, waybill.ge pauses that tool. If a search finds nothing, widen
+the dates or ask the user.
 
 ## Never ask for passwords in chat
 
@@ -218,5 +220,9 @@ They need no connection or company label, and no confirmation.
   `request_id` for support. Before repeating a binding action (activate,
   close, confirm, send), check the document's current state: the first
   attempt may already have reached RS.GE.
+- `RATE_LIMITED` with reason `lookup_misses` from `get_invoice` or
+  `get_waybill`: too many ids found nothing. Stop trying ids; find the
+  document with the list tool the message names (`list_invoices`,
+  `list_seller_waybills` or `list_buyer_waybills`), or ask the user.
 - Ask the user to reconnect waybill.ge only when the host reports an
   authentication failure (HTTP 401), never for the errors above.
