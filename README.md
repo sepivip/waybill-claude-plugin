@@ -16,10 +16,11 @@ registry and the official NBG exchange rates, in plain language.
   carries the goods, draft a carrier waybill and send it to the
   transporter after you confirm; the transporter adds its own driver
   and vehicle.
-- **RS.GE e-invoices:** issue an advance invoice for a prepayment or a
-  regular invoice without a waybill, send it to the buyer after you
-  confirm, and complete an advance by offsetting its VAT against the
-  final invoice.
+- **RS.GE e-invoices:** find invoices you issued or received by
+  counterparty, date, RS.GE number or amount, issue an advance invoice
+  for a prepayment or a regular invoice without a waybill, send it to
+  the buyer after you confirm, and complete an advance by offsetting its
+  VAT against the final invoice.
 - **Balance.ge accounting (read-only):** clients and vendors, items,
   stock levels, prices, who owes you and whom you owe, the general
   ledger and monthly cash flow. Nothing is ever posted to your ledger.
@@ -172,6 +173,14 @@ reconnect, or start a new session.
    Claude looks the company up by its 9-digit identification code (the
    same number as its TIN), checks its liens and reads the National Bank
    of Georgia's rate. No connection is needed for these lookups.
+
+10. **Find an e-invoice without its number**
+
+    > Find the e-invoice we received at the end of August for 210.70 GEL,
+    > and show its lines.
+
+    Claude searches the received invoices in one call and reads the
+    match. Nothing is changed in RS.GE.
 
 ## Links
 
