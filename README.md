@@ -16,7 +16,9 @@ registry and the official NBG exchange rates, in plain language.
   Close delivered waybills, confirm or reject incoming ones, and create
   invoices from waybills. When a transporter company carries the goods,
   draft a carrier waybill and send it to the transporter after you
-  confirm; the transporter adds its own driver and vehicle.
+  confirm; the transporter adds its own driver and vehicle. For a
+  return, suggest the waybill it sends goods back from, matched by goods
+  (RS.GE keeps no link between them).
 - **RS.GE e-invoices:** find invoices you issued or received by
   counterparty, date, RS.GE number or amount, issue an advance invoice
   for a prepayment or a regular invoice without a waybill, send it to

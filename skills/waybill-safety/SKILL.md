@@ -87,7 +87,11 @@ directly. For the number printed on a waybill (for example
 `0793384115`), pass it to `get_waybill` as `number`, as a string. Find
 other waybills with `list_seller_waybills` or `list_buyer_waybills`:
 `comment` finds an order number or other text in the comment, and on
-received waybills `seller_tin` is the supplier. Never step through ids
+received waybills `seller_tin` is the supplier. For the original of a
+return (type 5), call `find_return_original` with the return's id or
+number. RS.GE keeps no link between them, so its candidates are
+suggestions matched by goods: say so, and open the chosen one with
+`get_waybill` before relying on it. Never step through ids
 one by one: each call is a separate RS.GE request, so it takes many
 minutes and loads RS.GE for every waybill.ge customer. After 20 lookups
 in 10 minutes that find nothing, waybill.ge pauses that tool. If a
@@ -236,8 +240,8 @@ They need no connection or company label, and no confirmation.
   `request_id` for support. Before repeating a binding action (activate,
   close, confirm, send), check the document's current state: the first
   attempt may already have reached RS.GE.
-- `RATE_LIMITED` with reason `lookup_misses` from `get_invoice` or
-  `get_waybill`: too many ids found nothing. Stop trying ids; find the
+- `RATE_LIMITED` with reason `lookup_misses` from `get_invoice`,
+  `get_waybill` or `find_return_original`: too many ids found nothing. Stop trying ids; find the
   document with the list tool the message names (`list_invoices`,
   `list_seller_waybills` or `list_buyer_waybills`), or ask the user.
 - Ask the user to reconnect waybill.ge only when the host reports an
