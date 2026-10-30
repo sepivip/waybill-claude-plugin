@@ -18,7 +18,10 @@ registry and the official NBG exchange rates, in plain language.
   draft a carrier waybill and send it to the transporter after you
   confirm; the transporter adds its own driver and vehicle. For a
   return, suggest the waybill it sends goods back from, matched by goods
-  (RS.GE keeps no link between them).
+  (RS.GE keeps no link between them). Fix a wrong draft before you
+  activate it, correct an active or closed waybill (quantities, prices,
+  goods lines, addresses, driver) after you confirm the change, and see
+  what was corrected on a waybill, when and by whom.
 - **RS.GE e-invoices:** find invoices you issued or received by
   counterparty, date, RS.GE number or amount, issue an advance invoice
   for a prepayment or a regular invoice without a waybill, send it to
@@ -51,9 +54,9 @@ registry and the official NBG exchange rates, in plain language.
 The plugin adds one remote MCP server, `waybill`, at
 `https://waybill.ge/mcp`, and a small `waybill-safety` skill. The skill
 has Claude show you a waybill or e-invoice draft and wait for an
-explicit yes before any binding RS.GE action (activate, close, send to a
-transporter, confirm, create invoice, send an e-invoice, offset an
-advance), treat QuickShipper
+explicit yes before any binding RS.GE action (activate, close, correct,
+send to a transporter, confirm, create invoice, send an e-invoice, offset
+an advance), treat QuickShipper
 quotes as prices rather than bookings, keep slow 1C trial balance windows
 narrow, treat the Bank of Georgia tools as read-only, never search the
 public registry for people or report a guess when a public source is
