@@ -67,6 +67,16 @@ ask before `attach_advance_invoice` and again before `send_invoice`.
 If the user says anything other than a clear yes, do not call the tool.
 Offer to change the draft instead.
 
+## Name the RS.GE company
+
+When `list_rs_companies` returns more than one company, pass its label
+as `company` on every write: without it the write is refused before
+RS.GE is contacted (reason `company_selection_required`). If it is not
+clear which company the user means, ask before writing; a document id
+alone does not select a company. Name the company in every draft you
+show, and say which company the data came from when a read used the
+default one.
+
 ## Find invoices and waybills with the list tools
 
 To find an e-invoice, call `list_invoices` with what you know: the
@@ -142,9 +152,9 @@ can do it, so never offer to. No confirmation is needed for them.
   `NOT_HELD_CURRENCY` means no selected account holds that currency; the
   message lists the currencies that are held.
 - In bank transactions a person's 11-digit personal ID number is masked
-  to its last 3 digits (`********123`) in names, payment texts and TINs,
-  and a counterparty name is only the company or payee. Never try to recover or guess a personal ID, and never
-  ask the user for one.
+  to its last 3 digits (`********123`) in names, payment texts and TINs.
+  Never try to recover or guess a personal ID, and never ask the user
+  for one.
 - Disconnecting deletes the key from waybill.ge but does not revoke it at
   the bank. To end it there, the user deletes the API client in Business
   Online.
