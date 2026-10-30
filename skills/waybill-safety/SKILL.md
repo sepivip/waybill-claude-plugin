@@ -50,8 +50,9 @@ approval to activate: ask again once the draft exists.
 
 If something on a draft is wrong (a quantity, price, line, address or
 driver), fix it with `update_waybill_draft` before activating, then show
-the changes it returns. Never activate a draft you know is wrong and
-leave the user to fix it by hand.
+the changes it returns, including anything RS.GE changed on its own
+(`also_changed`). Never activate a draft you know is wrong and leave the
+user to fix it by hand.
 
 When a transporter company (for example a 3PL) carries the goods, save
 a carrier draft instead: `save_waybill_draft` with `transport_type` 7
@@ -85,8 +86,12 @@ comment. Leave `amount` out: a line's amount is its quantity times its
 price. A correction keeps the waybill's status, type and buyer. A
 carrier waybill is corrected only after its transporter has taken it,
 and its driver, vehicle and transport type stay as the transporter set
-them; say it is a carrier waybill when you show the change. The tool
-refuses a waybill linked to an e-invoice, a cancelled waybill or a
+them; say it is a carrier waybill when you show the change. RS.GE also
+changes some dates on its own when it saves a correction (a start date
+earlier than the activation time, a closed waybill's close and delivery
+dates): when `edit.message` names them, show them with the change before
+the yes, and after the save tell the user what `also_changed` lists. The
+tool refuses a waybill linked to an e-invoice, a cancelled waybill or a
 sub-waybill, and RS.GE refuses some periods and some closed waybills;
 then nothing changed, so tell the user to correct it on eservices.rs.ge.
 If the corrected waybill has no invoice yet, ask before
