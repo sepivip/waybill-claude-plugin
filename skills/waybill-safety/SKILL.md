@@ -1,6 +1,6 @@
 ---
 name: waybill-safety
-description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, send_waybill_to_transporter, confirm_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, find e-invoices with list_invoices instead of stepping through ids, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the Bank of Georgia tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper or 1C passwords or Bank of Georgia API keys in chat.
+description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, send_waybill_to_transporter, confirm_waybill, correct_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, fix a wrong draft with update_waybill_draft before activating it, find e-invoices with list_invoices instead of stepping through ids, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the Bank of Georgia tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper or 1C passwords or Bank of Georgia API keys in chat.
 ---
 
 # waybill.ge safety
@@ -22,8 +22,12 @@ in their latest message:
   and vehicle, activates the waybill and later closes it. It may not be
   reversible.
 - `confirm_waybill`: accepts a waybill another company issued to you.
+- `correct_waybill`: corrects a waybill RS.GE has already issued
+  (active or closed). RS.GE records every correction and the buyer sees
+  it. Show each changed line before and after, and the new total.
 - `save_invoice_from_waybill`: creates an RS.GE invoice from a waybill,
-  or changes an existing one when an invoice id is given.
+  or rewrites the waybill's own saved invoice when its `in_inv_id` is
+  given (the tool refuses any other invoice, and one already sent).
 - `send_invoice`: sends a saved e-invoice (advance or regular) to the
   buyer. RS.GE gives it its series and number; it cannot be unsent.
 - `attach_advance_invoice`: offsets an advance invoice's VAT against a
@@ -44,6 +48,11 @@ from the name sent.
 Do not treat an earlier general request ("issue a waybill to X") as
 approval to activate: ask again once the draft exists.
 
+If something on a draft is wrong (a quantity, price, line, address or
+driver), fix it with `update_waybill_draft` before activating, then show
+the changes it returns. Never activate a draft you know is wrong and
+leave the user to fix it by hand.
+
 When a transporter company (for example a 3PL) carries the goods, save
 a carrier draft instead: `save_waybill_draft` with `transport_type` 7
 and the transporter's `transporter_tin`, on type 1 or type 2 only, and
@@ -53,9 +62,10 @@ send it to that transporter, saying it may not be reversible. Only
 after a clear yes, call `send_waybill_to_transporter`. Never call
 `activate_waybill` or `close_waybill` on a carrier waybill: the
 transporter does both, and the tools refuse. `get_waybill` and
-`list_seller_waybills` show its `transporter_state`. If a save or send
-returns `SAVE_UNVERIFIED`, tell the user what the message says and
-check the waybill with `get_waybill` before doing anything else.
+`list_seller_waybills` show its `transporter_state`. If a save, send,
+update or correction returns `SAVE_UNVERIFIED`, tell the user what the
+message says and check the waybill with `get_waybill` before doing
+anything else.
 
 For a new e-invoice, call `save_advance_invoice` (a prepayment) or
 `save_supply_invoice` (a delivery) with no `invoice_id` first. Show the
@@ -66,6 +76,18 @@ ask before `attach_advance_invoice` and again before `send_invoice`.
 
 If the user says anything other than a clear yes, do not call the tool.
 Offer to change the draft instead.
+
+To correct an active or closed waybill, read it with `get_waybill`
+first and pass only what changes to `correct_waybill`: lines by their
+`items[].id`, new lines, removed lines, addresses, driver, vehicle,
+transport cost or comment. Leave `amount` out: a line's amount is its
+quantity times its price. A correction keeps the waybill's status, type
+and buyer. The tool refuses a waybill linked to an e-invoice, a
+cancelled, carrier or sub-waybill, and RS.GE refuses some periods and some
+closed waybills; then nothing changed, so tell the user to correct it on
+eservices.rs.ge. If the corrected waybill has no invoice yet, ask before
+`save_invoice_from_waybill`. To see what was corrected on a waybill,
+when and by whom, use `get_waybill_corrections`; it only reads.
 
 ## Name the RS.GE company
 
@@ -241,8 +263,9 @@ They need no connection or company label, and no confirmation.
   close, confirm, send), check the document's current state: the first
   attempt may already have reached RS.GE.
 - `RATE_LIMITED` with reason `lookup_misses` from `get_invoice`,
-  `get_waybill` or `find_return_original`: too many ids found nothing. Stop trying ids; find the
-  document with the list tool the message names (`list_invoices`,
+  `get_waybill`, `find_return_original` or `get_waybill_corrections`:
+  too many ids found nothing. Stop trying ids; find the document with
+  the list tool the message names (`list_invoices`,
   `list_seller_waybills` or `list_buyer_waybills`), or ask the user.
 - Ask the user to reconnect waybill.ge only when the host reports an
   authentication failure (HTTP 401), never for the errors above.
