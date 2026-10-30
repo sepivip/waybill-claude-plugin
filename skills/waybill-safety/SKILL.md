@@ -78,14 +78,18 @@ If the user says anything other than a clear yes, do not call the tool.
 Offer to change the draft instead.
 
 To correct an active or closed waybill, read it with `get_waybill`
-first and pass only what changes to `correct_waybill`: lines by their
-`items[].id`, new lines, removed lines, addresses, driver, vehicle,
-transport cost or comment. Leave `amount` out: a line's amount is its
-quantity times its price. A correction keeps the waybill's status, type
-and buyer. The tool refuses a waybill linked to an e-invoice, a
-cancelled, carrier or sub-waybill, and RS.GE refuses some periods and some
-closed waybills; then nothing changed, so tell the user to correct it on
-eservices.rs.ge. If the corrected waybill has no invoice yet, ask before
+first: its `edit` says which tool can change it, or why none can. Pass
+only what changes to `correct_waybill`: lines by their `items[].id`, new
+lines, removed lines, addresses, driver, vehicle, transport cost or
+comment. Leave `amount` out: a line's amount is its quantity times its
+price. A correction keeps the waybill's status, type and buyer. A
+carrier waybill is corrected only after its transporter has taken it,
+and its driver, vehicle and transport type stay as the transporter set
+them; say it is a carrier waybill when you show the change. The tool
+refuses a waybill linked to an e-invoice, a cancelled waybill or a
+sub-waybill, and RS.GE refuses some periods and some closed waybills;
+then nothing changed, so tell the user to correct it on eservices.rs.ge.
+If the corrected waybill has no invoice yet, ask before
 `save_invoice_from_waybill`. To see what was corrected on a waybill,
 when and by whom, use `get_waybill_corrections`; it only reads.
 
