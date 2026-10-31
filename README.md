@@ -21,9 +21,11 @@ registry and the official NBG exchange rates, in plain language.
   (RS.GE keeps no link between them). Fix a wrong draft before you
   activate it, correct an active or closed waybill (quantities, prices,
   goods lines, addresses, driver) after you confirm the change, and see
-  what was corrected on a waybill, when and by whom.
+  what was corrected on a waybill, when and (where RS.GE records it) by
+  whom.
 - **RS.GE e-invoices:** find invoices you issued or received by
-  counterparty, date, RS.GE number or amount, issue an advance invoice
+  counterparty, date, RS.GE number or amount, add up a month's output
+  and input VAT in one step, issue an advance invoice
   for a prepayment or a regular invoice without a waybill, send it to
   the buyer after you confirm, and complete an advance by offsetting its
   VAT against the final invoice.
@@ -187,6 +189,15 @@ reconnect, or start a new session.
 
     Claude searches the received invoices in one call and reads the
     match. Nothing is changed in RS.GE.
+
+11. **A month's VAT from the e-invoices**
+
+    > What is October's VAT: output, input and the difference?
+
+    Claude adds up October's issued and received e-invoices in one call,
+    counting each invoice once (a correction replaces the invoice it
+    corrects), and says that the VAT return can still differ. Nothing is
+    changed in RS.GE.
 
 ## Links
 
