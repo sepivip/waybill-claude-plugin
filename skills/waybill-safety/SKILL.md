@@ -173,7 +173,12 @@ can do it, so never offer to. No confirmation is needed for them.
   says whether it is the bank's own figure or the National Bank of
   Georgia's rate for the day), and a `type`: incoming_transfer,
   outgoing_transfer, fee, currency_conversion, card, cash, tax, salary,
-  internal_transfer or other.
+  internal_transfer or other. Every transaction has the same fields at
+  every bank; a value the bank does not give is null.
+- A payment without `counterparty_tin` is not an unpaid bill: banks often
+  leave out the payee's TIN on money out. `tin_coverage` counts the
+  payments that lack it and `tin_note` says so; match those by
+  `counterparty_iban` or name before calling anything unpaid.
 - What a bank's statements can do is in `capabilities` from
   `bank_list_connections`. Bank of Georgia's statement summary does not
   cover today: when it returns `covered_to` and a `note`, use
