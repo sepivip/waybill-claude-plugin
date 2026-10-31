@@ -4,7 +4,8 @@ The financial connector for businesses in Georgia. This plugin connects
 Claude Code to [waybill.ge](https://waybill.ge), so you can issue and
 track RS.GE e-waybills and e-invoices, ask read-only questions about
 your Balance.ge or 1C (OneSoft) accounting, your QuickShipper deliveries
-and your Bank of Georgia accounts, and check companies in the public
+and your Bank of Georgia and ProCredit Bank accounts, and check companies
+in the public
 registry and the official NBG exchange rates, in plain language.
 
 ## What it does
@@ -28,7 +29,11 @@ registry and the official NBG exchange rates, in plain language.
   and input VAT in one step, issue an advance invoice
   for a prepayment or a regular invoice without a waybill, send it to
   the buyer after you confirm, and complete an advance by offsetting its
-  VAT against the final invoice.
+  VAT against the final invoice. Correct an invoice you already sent (a
+  new price or quantity, returned goods, a cancelled operation): Claude
+  prepares the correction, shows the old and new lines and the VAT
+  change, and sends it only after you confirm. This is also how a
+  waybill that already has an invoice is fixed.
 - **Balance.ge accounting (read-only):** clients and vendors, items,
   stock levels, prices, who owes you and whom you owe, the general
   ledger and monthly cash flow. Nothing is ever posted to your ledger.
@@ -45,6 +50,10 @@ registry and the official NBG exchange rates, in plain language.
   purpose, and period totals with daily balances, for the accounts you
   choose. waybill.ge cannot make payments or transfers, or sign anything
   at the bank.
+- **ProCredit Bank accounts (read-only):** current balances,
+  transactions and period totals for the accounts you choose, over the
+  last 90 days (ProCredit Bank states no available balance). Same rule:
+  no payments, transfers or signing at the bank.
 - **Public registry and NBG rates (read-only):** check a Georgian
   company in the National Agency of Public Registry (NAPR): its status
   and legal form, the liens recorded against it, and the registration
@@ -57,13 +66,14 @@ The plugin adds one remote MCP server, `waybill`, at
 `https://waybill.ge/mcp`, and a small `waybill-safety` skill. The skill
 has Claude show you a waybill or e-invoice draft and wait for an
 explicit yes before any binding RS.GE action (activate, close, correct,
-send to a transporter, confirm, create invoice, send an e-invoice, offset
-an advance), treat QuickShipper
+send to a transporter, confirm, create invoice, correct or send an
+e-invoice, offset an advance), treat QuickShipper
 quotes as prices rather than bookings, keep slow 1C trial balance windows
-narrow, treat the Bank of Georgia tools as read-only, never search the
+narrow, treat the bank tools as read-only, never search the
 public registry for people or report a guess when a public source is
 down, and never ask for your RS.GE, Balance.ge, QuickShipper or 1C
-passwords or your Bank of Georgia API key in chat.
+passwords, your Bank of Georgia API key or your ProCredit Bank service
+user's password in chat.
 
 ## Install
 
@@ -94,20 +104,25 @@ Sign-in is OAuth. The plugin contains no API keys, tokens or passwords.
    if you use them, your Balance.ge companies, QuickShipper accounts,
    1C publications (with a dedicated read-only 1C user; the
    [1C setup guide](https://waybill.ge/dashboard/integrations/onesoft/setup)
-   lists the one-time steps inside 1C) and Bank of Georgia accounts.
-   For the bank, you create a Business Online API client (Client
-   Credentials Flow) for waybill.ge and choose the accounts Claude may
-   read; the Bank of Georgia section of
+   lists the one-time steps inside 1C) and bank accounts. For Bank of
+   Georgia, you create a Business Online API client (Client Credentials
+   Flow) for waybill.ge and choose the accounts Claude may read; the Bank
+   of Georgia section of
    [Business integrations](https://waybill.ge/dashboard/integrations#bog)
-   opens the connect page with the step-by-step guide. These credentials
-   are stored encrypted on waybill.ge (for QuickShipper only the login
-   token QuickShipper issues) and never reach Claude. Disconnecting a
-   bank connection deletes its API key from waybill.ge.
+   opens the connect page with the step-by-step guide. For ProCredit
+   Bank, you add a synchronization service user in ProCredit Internet
+   Bank; the
+   [ProCredit Bank guide](https://waybill.ge/dashboard/integrations/procredit/setup)
+   walks through it. These credentials are stored encrypted on
+   waybill.ge (for QuickShipper only the login token QuickShipper
+   issues) and never reach Claude. Disconnecting a bank connection
+   deletes its key or service user from waybill.ge.
 
 New accounts start on the Free plan: 300 actions a month, every tool,
 no end date. Plans and limits:
-[waybill.ge](https://waybill.ge/#pricing). How many Bank of Georgia
-connections you can add depends on your plan.
+[waybill.ge](https://waybill.ge/#pricing). How many bank connections
+(Bank of Georgia and ProCredit Bank together) you can add depends on your
+plan.
 
 When waybill.ge's tools change, the server asks Claude Code to fetch the
 tool list again. If the tools still look outdated after an update (an old
@@ -164,13 +179,15 @@ reconnect, or start a new session.
    Claude finds the customer, lists its contracts and reads the
    receivable per contract. Nothing is posted in 1C.
 
-8. **Bank of Georgia balances and last week's money in and out**
+8. **Bank balances and last week's money in and out**
 
-   > What is the balance on our Bank of Georgia accounts, and how much
-   > came in and went out of the GEL account last week?
+   > What is the balance on our Bank of Georgia and ProCredit Bank
+   > accounts, and how much came in and went out of the ProCredit GEL
+   > account last week?
 
-   Claude reads the balances and the GEL account's statement summary.
-   Nothing is paid, transferred or signed at the bank.
+   Claude reads the balances at both banks and the ProCredit GEL
+   account's statement summary. Nothing is paid, transferred or signed
+   at the bank.
 
 9. **Check a new customer in the public registry, and today's USD rate**
 
@@ -199,6 +216,16 @@ reconnect, or start a new session.
     corrects), and says that the VAT return can still differ. Nothing is
     changed in RS.GE.
 
+12. **Fix the price on a waybill that already has an invoice**
+
+    > Waybill 0987666077 should have been 25 GEL, not 125. Fix it.
+
+    Claude reads the waybill, sees it is linked to an invoice (RS.GE does
+    not edit such a waybill), and prepares a correction of that invoice
+    with the new price. It shows you the old and new lines and the VAT
+    change and saves the correction only after you confirm; it sends it
+    to the buyer only after a second yes.
+
 ## Links
 
 - Documentation: <https://waybill.ge/developers>
@@ -210,5 +237,5 @@ reconnect, or start a new session.
 [MIT](LICENSE).
 
 waybill.ge is not affiliated with rs.ge, Balance.ge, QuickShipper, OneSoft,
-1C, Bank of Georgia, the National Agency of Public Registry or the National
-Bank of Georgia.
+1C, Bank of Georgia, ProCredit Bank, the National Agency of Public Registry
+or the National Bank of Georgia.

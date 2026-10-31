@@ -1,6 +1,6 @@
 ---
 name: waybill-safety
-description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, send_waybill_to_transporter, confirm_waybill, correct_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, fix a wrong draft with update_waybill_draft before activating it, find e-invoices with list_invoices instead of stepping through ids, sum a month's VAT with vat_period_summary, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the Bank of Georgia tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper or 1C passwords or Bank of Georgia API keys in chat.
+description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, ProCredit Bank, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, send_waybill_to_transporter, confirm_waybill, correct_waybill, save_invoice_from_waybill, correct_invoice, send_invoice or attach_advance_invoice, fix a wrong draft with update_waybill_draft before activating it, find e-invoices with list_invoices instead of stepping through ids, sum a month's VAT with vat_period_summary, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the bank tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper or 1C passwords, Bank of Georgia API keys or ProCredit Bank service user passwords in chat.
 ---
 
 # waybill.ge safety
@@ -28,8 +28,14 @@ in their latest message:
 - `save_invoice_from_waybill`: creates an RS.GE invoice from a waybill,
   or rewrites the waybill's own saved invoice when its `in_inv_id` is
   given (the tool refuses any other invoice, and one already sent).
-- `send_invoice`: sends a saved e-invoice (advance or regular) to the
-  buyer. RS.GE gives it its series and number; it cannot be unsent.
+- `correct_invoice`: prepares a correction of an e-invoice the company
+  already sent (a new price or quantity, goods returned, a changed or
+  cancelled operation). It is saved unsent, and an invoice has one
+  unsent correction at a time. Show the invoice's lines and the new full
+  lines, the new total and the VAT change.
+- `send_invoice`: sends a saved e-invoice (advance or regular), or an
+  unsent correction, to the buyer. RS.GE gives it its series and number;
+  it cannot be unsent.
 - `attach_advance_invoice`: offsets an advance invoice's VAT against a
   supply invoice, which changes the VAT that invoice charges.
 - `save_advance_invoice` or `save_supply_invoice` with a non-zero
@@ -91,9 +97,29 @@ changes some dates on its own when it saves a correction (a start date
 earlier than the activation time, a closed waybill's close and delivery
 dates): when `edit.message` names them, show them with the change before
 the yes, and after the save tell the user what `also_changed` lists. The
-tool refuses a waybill linked to an e-invoice, a cancelled waybill or a
-sub-waybill, and RS.GE refuses some periods and some closed waybills;
-then nothing changed, so tell the user to correct it on eservices.rs.ge.
+tool refuses a cancelled waybill or a sub-waybill, and RS.GE refuses
+some periods and some closed waybills; then nothing changed, so tell the
+user to correct it on eservices.rs.ge.
+
+RS.GE does not edit a waybill linked to an e-invoice: `edit.tool` is
+`correct_invoice`. Correct the invoice instead, with the waybill's
+`invoice_id`; the waybill stays as it is, as on RS.GE's own corrections.
+Read the invoice with `get_invoice`, then pass `correct_invoice` the
+`reason` (`price_changed`, `goods_returned`, `operation_changed` or
+`cancelled`) and the invoice's NEW full lines, every line that stays
+with its new quantity and amount, not the difference. For goods that
+came back, issue the return waybill (type 5) to the same buyer first,
+then pass its number as `return_waybill_number` with the goods that were
+kept (`[]` when everything came back). Show the user the old and new
+lines and `change` (the VAT difference) and get a yes before
+`correct_invoice`; it saves an unsent correction and returns its id.
+Show that correction and ask again before `send_invoice` with that id.
+One unsent correction at a time: if the tool answers with a
+`correction_id`, change that correction's lines with `correct_invoice`
+on its id instead of making another. A corrected invoice is corrected
+again through its newest correction (`newest_invoice_id`). Advance
+invoices and invoices with an advance offset are corrected on
+eservices.rs.ge.
 If the corrected waybill has no invoice yet, ask before
 `save_invoice_from_waybill`. To see what was corrected on a waybill,
 when and by whom, use `get_waybill_corrections`; it only reads. RS.GE
@@ -148,14 +174,15 @@ reverse charge, invoices registered later).
 ## Never ask for passwords in chat
 
 Never ask the user to type an RS.GE, Balance.ge, QuickShipper or 1C
-password, service user password or API key, or a Bank of Georgia
-Business Online client ID or secret, into the conversation, and do not
-repeat one if they paste it. Credentials belong in the waybill.ge
-dashboard, under Business integrations:
-https://waybill.ge/dashboard/integrations (RS.GE and Balance.ge companies,
-QuickShipper accounts, 1C publications and Bank of Georgia connections
-are connected and managed there; the bank's section is
-https://waybill.ge/dashboard/integrations#bog).
+password, service user password or API key, a Bank of Georgia Business
+Online client ID or secret, or a ProCredit Bank synchronization service
+user's name or password, into the conversation, and do not repeat one if
+they paste it. Credentials belong in the waybill.ge dashboard, under
+Business integrations: https://waybill.ge/dashboard/integrations (RS.GE
+and Balance.ge companies, QuickShipper accounts, 1C publications and bank
+connections are connected and managed there; the banks' sections are
+https://waybill.ge/dashboard/integrations#bog and
+https://waybill.ge/dashboard/integrations#procredit).
 
 If a tool reports missing or wrong credentials, point the user to the
 dashboard page instead.
@@ -170,18 +197,25 @@ not pass its label to any other Balance tool and do not run
 `balance_check_credentials` on it. Tell the user to disconnect it and
 connect the right company again under Business integrations.
 
-## Bank of Georgia is read-only
+## Banks are read-only
 
 The `bank_*` tools only read the balances and statements of the Bank of
-Georgia accounts the user selected in the dashboard. They never move
-money: nothing is paid, transferred or signed at the bank, and no tool
-can do it, so never offer to. No confirmation is needed for them.
+Georgia and ProCredit Bank accounts the user selected in the dashboard.
+They never move money: nothing is paid, transferred or signed at the
+bank, and no tool can do it, so never offer to. No confirmation is needed
+for them.
 
-- The user never pastes Business Online keys in chat. The client ID and
-  secret of the Business Online API client go on the dashboard connect
-  page (https://waybill.ge/dashboard/integrations#bog, then Bank of
-  Georgia, Connect), which has the step-by-step guide. If the user pastes
-  one anyway, do not repeat it; point them to that page.
+- The user never pastes bank credentials in chat. For Bank of Georgia,
+  the client ID and secret of the Business Online API client go on the
+  dashboard connect page (https://waybill.ge/dashboard/integrations#bog,
+  then Bank of Georgia, Connect), which has the step-by-step guide. For
+  ProCredit Bank, the name and password of a synchronization service
+  user go on https://waybill.ge/dashboard/integrations/procredit/connect;
+  https://waybill.ge/dashboard/integrations/procredit/setup walks through
+  adding that user in ProCredit Internet Bank. If the user pastes one
+  anyway, do not repeat it; point them to that page.
+- With more than one bank connected, pass `bank` (`bog` or `procredit`)
+  or a `connection` label; without either, the answer asks which bank.
 - Pass a label from `bank_list_connections` as `connection` when the
   user has more than one. `bank_list_transactions` and
   `bank_statement_summary` read one selected account over at most 31
@@ -201,10 +235,20 @@ can do it, so never offer to. No confirmation is needed for them.
   cover today: when it returns `covered_to` and a `note`, use
   `bank_list_transactions` for the missing days. `truncated: true` means
   the list is incomplete; follow its `hint`.
+- ProCredit Bank reads reach back 90 days only (`history_days`); an
+  earlier window is refused as `OUT_OF_RANGE`, so say so instead of
+  answering in part. ProCredit states no available balance: `available`
+  is null with an `available_note`, never zero. An account with no
+  entries in those 90 days has `current: null` with a `note`: say the
+  bank states no balance, never 0.
+- A currency or IBAN the company opened at the bank later is not read
+  until the user adds it with Add accounts on the connection's dashboard
+  page; Check again only re-checks the accounts already saved.
 - `NEEDS_RECONNECT` (with `legacy_code` `REAUTH_REQUIRED` when the key
-  was refused) means Bank of Georgia no longer accepts the saved API key,
-  or the connection was disconnected: the user updates the key or
-  connects again under Business integrations. A connection with
+  was refused) means the bank no longer accepts the saved API key or
+  service user (for ProCredit, often a changed password), or the
+  connection was disconnected: the user updates it or connects again
+  under Business integrations. A connection with
   `accounts: []` cannot be read until the user adds an account there.
   `NOT_HELD_CURRENCY` means no selected account holds that currency; the
   message lists the currencies that are held.
@@ -214,7 +258,8 @@ can do it, so never offer to. No confirmation is needed for them.
   for one.
 - Disconnecting deletes the key from waybill.ge but does not revoke it at
   the bank. To end it there, the user deletes the API client in Business
-  Online.
+  Online (Bank of Georgia), or blocks or deletes the service user in
+  ProCredit Internet Bank, under My profile, Users (ProCredit Bank).
 
 ## QuickShipper is read-only
 
