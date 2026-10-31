@@ -1,6 +1,6 @@
 ---
 name: waybill-safety
-description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, send_waybill_to_transporter, confirm_waybill, correct_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, fix a wrong draft with update_waybill_draft before activating it, find e-invoices with list_invoices instead of stepping through ids, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the Bank of Georgia tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper or 1C passwords or Bank of Georgia API keys in chat.
+description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, send_waybill_to_transporter, confirm_waybill, correct_waybill, save_invoice_from_waybill, send_invoice or attach_advance_invoice, fix a wrong draft with update_waybill_draft before activating it, find e-invoices with list_invoices instead of stepping through ids, sum a month's VAT with vat_period_summary, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the Bank of Georgia tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper or 1C passwords or Bank of Georgia API keys in chat.
 ---
 
 # waybill.ge safety
@@ -96,7 +96,10 @@ sub-waybill, and RS.GE refuses some periods and some closed waybills;
 then nothing changed, so tell the user to correct it on eservices.rs.ge.
 If the corrected waybill has no invoice yet, ask before
 `save_invoice_from_waybill`. To see what was corrected on a waybill,
-when and by whom, use `get_waybill_corrections`; it only reads.
+when and by whom, use `get_waybill_corrections`; it only reads. RS.GE
+names who corrected only for corrections made through its API; for one
+made on the RS.GE website `corrected_by` is empty, so say that RS.GE does
+not record who, never guess a person.
 
 ## Name the RS.GE company
 
@@ -127,6 +130,20 @@ one by one: each call is a separate RS.GE request, so it takes many
 minutes and loads RS.GE for every waybill.ge customer. After 20 lookups
 in 10 minutes that find nothing, waybill.ge pauses that tool. If a
 search finds nothing, widen the dates or ask the user.
+
+Waybill list rows are short: the number, status, amount, the other
+party and the fields that have a value. Read the goods, addresses and
+dates of one waybill with `get_waybill`; pass `all_fields` only when you
+need every field on many rows. On received waybills `confirmed` means
+this company confirmed receipt on RS.GE, an optional step separate from
+closing, so a closed waybill is often unconfirmed; `confirmed=false`
+lists the ones not confirmed yet.
+
+For a month's VAT (output, input and the difference), call
+`vat_period_summary` with the month instead of adding up
+`list_invoices` pages. It counts each invoice once and adds up
+e-invoices only, so tell the user the VAT return can differ (imports,
+reverse charge, invoices registered later).
 
 ## Never ask for passwords in chat
 
