@@ -215,7 +215,11 @@ for them.
   adding that user in ProCredit Internet Bank. If the user pastes one
   anyway, do not repeat it; point them to that page.
 - With more than one bank connected, pass `bank` (`bog` or `procredit`)
-  or a `connection` label; without either, the answer asks which bank.
+  or a `connection` label. Without either, the answer asks which bank,
+  because each bank keeps its own default connection. If exactly one
+  connection across those banks is marked default, that one is read
+  instead. Every answer's `bank` field says which bank was read, so name
+  that bank to the user.
 - Pass a label from `bank_list_connections` as `connection` when the
   user has more than one. `bank_list_transactions` and
   `bank_statement_summary` read one selected account over at most 31
