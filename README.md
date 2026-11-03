@@ -4,9 +4,9 @@ The financial connector for businesses in Georgia. This plugin connects
 Claude Code to [waybill.ge](https://waybill.ge), so you can issue and
 track RS.GE e-waybills and e-invoices, ask read-only questions about
 your Balance.ge or 1C (OneSoft) accounting, your QuickShipper deliveries
-and your Bank of Georgia and ProCredit Bank accounts, and check companies
-in the public
-registry and the official NBG exchange rates, in plain language.
+and your Bank of Georgia, TBC Bank and ProCredit Bank accounts, and
+check companies in the public registry and the official NBG exchange
+rates, in plain language.
 
 ## What it does
 
@@ -50,6 +50,13 @@ registry and the official NBG exchange rates, in plain language.
   purpose, and period totals with daily balances, for the accounts you
   choose. waybill.ge cannot make payments or transfers, or sign anything
   at the bank.
+- **TBC Bank accounts (read-only):** current balances (with the
+  overdraft limit where TBC states one), transactions and period totals
+  for the accounts you choose. When you connect, Find my accounts
+  suggests the accounts with recent movements that your key can read.
+  The list can miss accounts, so add any other one by its IBAN on the
+  connection's page. Same rule: no payments, transfers or signing at the
+  bank.
 - **ProCredit Bank accounts (read-only):** current balances,
   transactions and period totals for the accounts you choose, over the
   last 90 days (ProCredit Bank states no available balance). Same rule:
@@ -72,8 +79,8 @@ quotes as prices rather than bookings, keep slow 1C trial balance windows
 narrow, treat the bank tools as read-only, never search the
 public registry for people or report a guess when a public source is
 down, and never ask for your RS.GE, Balance.ge, QuickShipper or 1C
-passwords, your Bank of Georgia API key or your ProCredit Bank service
-user's password in chat.
+passwords, your Bank of Georgia or TBC Bank API key or your ProCredit
+Bank service user's password in chat.
 
 ## Install
 
@@ -109,7 +116,14 @@ Sign-in is OAuth. The plugin contains no API keys, tokens or passwords.
    Flow) for waybill.ge and choose the accounts Claude may read; the Bank
    of Georgia section of
    [Business integrations](https://waybill.ge/dashboard/integrations#bog)
-   opens the connect page with the step-by-step guide. For ProCredit
+   opens the connect page with the step-by-step guide. For TBC Bank,
+   you create an API integration for waybill.ge in TBC Business Internet
+   Banking that may only view transaction history and statements, and
+   paste its client ID and secret on the
+   [TBC Bank connect page](https://waybill.ge/dashboard/integrations/tbc/connect),
+   which finds your accounts; the
+   [TBC Bank guide](https://waybill.ge/dashboard/integrations/tbc/setup)
+   walks through it. For ProCredit
    Bank, you add a synchronization service user in ProCredit Internet
    Bank; the
    [ProCredit Bank guide](https://waybill.ge/dashboard/integrations/procredit/setup)
@@ -121,8 +135,8 @@ Sign-in is OAuth. The plugin contains no API keys, tokens or passwords.
 New accounts start on the Free plan: 300 actions a month, every tool,
 no end date. Plans and limits:
 [waybill.ge](https://waybill.ge/#pricing). How many bank connections
-(Bank of Georgia and ProCredit Bank together) you can add depends on your
-plan.
+(Bank of Georgia, TBC Bank and ProCredit Bank together) you can add
+depends on your plan.
 
 When waybill.ge's tools change, the server asks Claude Code to fetch the
 tool list again. If the tools still look outdated after an update (an old
@@ -181,12 +195,12 @@ reconnect, or start a new session.
 
 8. **Bank balances and last week's money in and out**
 
-   > What is the balance on our Bank of Georgia and ProCredit Bank
-   > accounts, and how much came in and went out of the ProCredit GEL
+   > What is the balance on our Bank of Georgia, TBC Bank and ProCredit
+   > Bank accounts, and how much came in and went out of the TBC GEL
    > account last week?
 
-   Claude reads the balances at both banks and the ProCredit GEL
-   account's statement summary. Nothing is paid, transferred or signed
+   Claude reads the balances at every bank and the TBC GEL account's
+   statement summary. Nothing is paid, transferred or signed
    at the bank.
 
 9. **Check a new customer in the public registry, and today's USD rate**
@@ -237,5 +251,5 @@ reconnect, or start a new session.
 [MIT](LICENSE).
 
 waybill.ge is not affiliated with rs.ge, Balance.ge, QuickShipper, OneSoft,
-1C, Bank of Georgia, ProCredit Bank, the National Agency of Public Registry
-or the National Bank of Georgia.
+1C, Bank of Georgia, TBC Bank, ProCredit Bank, the National Agency of
+Public Registry or the National Bank of Georgia.
