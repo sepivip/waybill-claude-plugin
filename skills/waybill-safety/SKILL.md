@@ -1,6 +1,6 @@
 ---
 name: waybill-safety
-description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, ProCredit Bank, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, send_waybill_to_transporter, confirm_waybill, correct_waybill, save_invoice_from_waybill, correct_invoice, send_invoice or attach_advance_invoice, fix a wrong draft with update_waybill_draft before activating it, find e-invoices with list_invoices instead of stepping through ids, sum a month's VAT with vat_period_summary, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the bank tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper or 1C passwords, Bank of Georgia API keys or ProCredit Bank service user passwords in chat.
+description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, TBC Bank, ProCredit Bank, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, send_waybill_to_transporter, confirm_waybill, correct_waybill, save_invoice_from_waybill, correct_invoice, send_invoice or attach_advance_invoice, fix a wrong draft with update_waybill_draft before activating it, find e-invoices with list_invoices instead of stepping through ids, sum a month's VAT with vat_period_summary, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the bank tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper, 1C or bank passwords or API keys in chat.
 ---
 
 # waybill.ge safety
@@ -175,13 +175,15 @@ reverse charge, invoices registered later).
 
 Never ask the user to type an RS.GE, Balance.ge, QuickShipper or 1C
 password, service user password or API key, a Bank of Georgia Business
-Online client ID or secret, or a ProCredit Bank synchronization service
-user's name or password, into the conversation, and do not repeat one if
-they paste it. Credentials belong in the waybill.ge dashboard, under
-Business integrations: https://waybill.ge/dashboard/integrations (RS.GE
-and Balance.ge companies, QuickShipper accounts, 1C publications and bank
-connections are connected and managed there; the banks' sections are
-https://waybill.ge/dashboard/integrations#bog and
+Online or TBC Bank API integration client ID or secret, or a ProCredit
+Bank synchronization service user's name or password, into the
+conversation, and do not repeat one if they paste it. Credentials belong
+in the waybill.ge dashboard, under Business integrations:
+https://waybill.ge/dashboard/integrations (RS.GE and Balance.ge
+companies, QuickShipper accounts, 1C publications and bank connections
+are connected and managed there; the banks' sections are
+https://waybill.ge/dashboard/integrations#bog,
+https://waybill.ge/dashboard/integrations#tbc and
 https://waybill.ge/dashboard/integrations#procredit).
 
 If a tool reports missing or wrong credentials, point the user to the
@@ -200,7 +202,8 @@ connect the right company again under Business integrations.
 ## Banks are read-only
 
 The `bank_*` tools only read the balances and statements of the Bank of
-Georgia and ProCredit Bank accounts the user selected in the dashboard.
+Georgia, TBC Bank and ProCredit Bank accounts the user selected in the
+dashboard.
 They never move money: nothing is paid, transferred or signed at the
 bank, and no tool can do it, so never offer to. No confirmation is needed
 for them.
@@ -209,13 +212,21 @@ for them.
   the client ID and secret of the Business Online API client go on the
   dashboard connect page (https://waybill.ge/dashboard/integrations#bog,
   then Bank of Georgia, Connect), which has the step-by-step guide. For
+  TBC Bank, the client ID and secret of an API integration created in
+  TBC Business Internet Banking go on
+  https://waybill.ge/dashboard/integrations/tbc/connect, which suggests
+  the accounts with recent movements that the key can read (Find my
+  accounts; the list can be incomplete, and any other account is added
+  by its IBAN on the connection's page);
+  https://waybill.ge/dashboard/integrations/tbc/setup walks through
+  creating that integration. For
   ProCredit Bank, the name and password of a synchronization service
   user go on https://waybill.ge/dashboard/integrations/procredit/connect;
   https://waybill.ge/dashboard/integrations/procredit/setup walks through
   adding that user in ProCredit Internet Bank. If the user pastes one
   anyway, do not repeat it; point them to that page.
-- With more than one bank connected, pass `bank` (`bog` or `procredit`)
-  or a `connection` label. Without either, the answer asks which bank,
+- With more than one bank connected, pass `bank` (`bog`, `tbc` or
+  `procredit`) or a `connection` label. Without either, the answer asks which bank,
   because each bank keeps its own default connection. If exactly one
   connection across those banks is marked default, that one is read
   instead. Every answer's `bank` field says which bank was read, so name
@@ -239,6 +250,16 @@ for them.
   cover today: when it returns `covered_to` and a `note`, use
   `bank_list_transactions` for the missing days. `truncated: true` means
   the list is incomplete; follow its `hint`.
+- TBC Bank's statement summary gives the period's totals only: `daily`
+  is null with a `daily_note`, so use `bank_list_transactions` for
+  day-by-day entries. A TBC balance can carry `overdraft_limit`, which
+  is why `available` may be higher than `current`. A TBC transaction
+  with `status` (`awaiting_authorization` or
+  `awaiting_second_authorization`) is not authorized at the bank yet:
+  say so, and do not count it as settled. A `PERMISSION_DENIED` that
+  says TBC Bank refused the Business Internet Banking user linked to the
+  integration (blocked, deleted or not active) is fixed at the bank, on
+  its API Integration page, not in waybill.ge.
 - ProCredit Bank reads reach back 90 days only (`history_days`); an
   earlier window is refused as `OUT_OF_RANGE`, so say so instead of
   answering in part. ProCredit states no available balance: `available`
@@ -262,8 +283,10 @@ for them.
   for one.
 - Disconnecting deletes the key from waybill.ge but does not revoke it at
   the bank. To end it there, the user deletes the API client in Business
-  Online (Bank of Georgia), or blocks or deletes the service user in
-  ProCredit Internet Bank, under My profile, Users (ProCredit Bank).
+  Online (Bank of Georgia), deletes the integration on the API
+  Integration page of TBC Business Internet Banking (TBC Bank), or
+  blocks or deletes the service user in ProCredit Internet Bank, under
+  My profile, Users (ProCredit Bank).
 
 ## QuickShipper is read-only
 
