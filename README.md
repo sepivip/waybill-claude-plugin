@@ -19,8 +19,9 @@ rates, in plain language.
   draft a carrier waybill and send it to the transporter after you
   confirm; the transporter adds its own driver and vehicle. For a
   return, suggest the waybill it sends goods back from, matched by goods
-  (RS.GE keeps no link between them). Fix a wrong draft before you
-  activate it, correct an active or closed waybill (quantities, prices,
+  (RS.GE keeps no link between them). Confirm changes before editing a
+  saved draft, then confirm the updated draft before activation.
+  Correct an active or closed waybill (quantities, prices,
   goods lines, addresses, driver) after you confirm the change, and see
   what was corrected on a waybill, when and (where RS.GE records it) by
   whom.
@@ -48,8 +49,10 @@ rates, in plain language.
 - **Bank of Georgia accounts (read-only):** current balances,
   transactions filtered by direction, counterparty, amount or payment
   purpose, and period totals with daily balances, for the accounts you
-  choose. waybill.ge cannot make payments or transfers, or sign anything
-  at the bank.
+  choose. One question can search all your connected banks at once,
+  and money moved between your own accounts is marked, so it can be
+  kept out of income and spending. waybill.ge cannot make payments or
+  transfers, or sign anything at the bank.
 - **TBC Bank accounts (read-only):** current balances (with the
   overdraft limit where TBC states one), transactions and period totals
   for the accounts you choose. When you connect, Find my accounts
@@ -72,7 +75,7 @@ rates, in plain language.
 The plugin adds one remote MCP server, `waybill`, at
 `https://waybill.ge/mcp`, and a small `waybill-safety` skill. The skill
 has Claude show you a waybill or e-invoice draft and wait for an
-explicit yes before any binding RS.GE action (activate, close, correct,
+explicit yes before editing a saved draft or a binding RS.GE action (activate, close, correct,
 send to a transporter, confirm, create invoice, correct or send an
 e-invoice, offset an advance), treat QuickShipper
 quotes as prices rather than bookings, keep slow 1C trial balance windows
