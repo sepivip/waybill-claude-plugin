@@ -1,6 +1,6 @@
 ---
 name: waybill-safety
-description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, TBC Bank, ProCredit Bank, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, send_waybill_to_transporter, confirm_waybill, correct_waybill, save_invoice_from_waybill, correct_invoice, send_invoice or attach_advance_invoice, fix a wrong draft with update_waybill_draft before activating it, find e-invoices with list_invoices instead of stepping through ids, sum a month's VAT with vat_period_summary, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the bank tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper, 1C or bank passwords or API keys in chat.
+description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, TBC Bank, ProCredit Bank, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, send_waybill_to_transporter, confirm_waybill, correct_waybill, save_invoice_from_waybill, correct_invoice, send_invoice or attach_advance_invoice, confirm saved-draft edits before update_waybill_draft and activation, find e-invoices with list_invoices instead of stepping through ids, sum a month's VAT with vat_period_summary, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the bank tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper, 1C or bank passwords or API keys in chat.
 ---
 
 # waybill.ge safety
@@ -8,12 +8,14 @@ description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills
 The waybill.ge tools act on real tax documents at the Georgian Revenue
 Service (RS.GE). Some of them cannot be undone.
 
-## Confirm before binding actions
+## Confirm before draft edits and binding actions
 
 Before you call any of these tools, show the user exactly what will
-happen and wait for an explicit "yes" (or an equally clear instruction)
-in their latest message:
+happen and obtain an explicit "yes" (or an equally clear instruction):
 
+- `update_waybill_draft`: overwrites saved fields and can remove goods
+  lines. Show the company, draft id, changed fields and goods before
+  and after, removed lines and the new total.
 - `activate_waybill`: sends the draft to RS.GE and makes it legally
   effective. It can later be cancelled, never returned to draft.
 - `close_waybill`: marks the goods as delivered.
@@ -45,6 +47,11 @@ in their latest message:
 `cancel_waybill` and `reject_waybill` are also final: confirm them the
 same way.
 
+An explicit instruction already given for the displayed targets and effect
+is sufficient. If the draft, company, amount or effect changes, confirm the
+changed action. Do not infer permission from urgency, a read request or a
+request to prepare a draft.
+
 For a new waybill, always call `save_waybill_draft` first. Show the
 draft (buyer name and TIN, route, goods, quantities, prices, total,
 transport details and the draft id) and ask whether to activate it.
@@ -55,8 +62,9 @@ Do not treat an earlier general request ("issue a waybill to X") as
 approval to activate: ask again once the draft exists.
 
 If something on a draft is wrong (a quantity, price, line, address or
-driver), fix it with `update_waybill_draft` before activating, then show
-the changes it returns, including anything RS.GE changed on its own
+driver), show the proposed edits and obtain a clear instruction before
+`update_waybill_draft`. Then show the changes it returns, including
+anything RS.GE changed on its own
 (`also_changed`). Never activate a draft you know is wrong and leave the
 user to fix it by hand.
 
@@ -81,8 +89,8 @@ invoice id) and ask whether to send it. To complete an advance, find it
 with `list_attachable_advance_invoices`, save the supply invoice, then
 ask before `attach_advance_invoice` and again before `send_invoice`.
 
-If the user says anything other than a clear yes, do not call the tool.
-Offer to change the draft instead.
+Without a clear instruction for the displayed action, do not call the
+tool. Offer to prepare revised details instead.
 
 To correct an active or closed waybill, read it with `get_waybill`
 first: its `edit` says which tool can change it, or why none can. Pass
@@ -189,6 +197,42 @@ https://waybill.ge/dashboard/integrations#procredit).
 If a tool reports missing or wrong credentials, point the user to the
 dashboard page instead.
 
+## Person references in OpenAI's listed apps
+
+The ChatGPT app from OpenAI's directory and the waybill.ge Codex plugin
+connect to `https://waybill.ge/mcp/openai`, where the tools neither take
+nor show a person's personal ID number: a person (a driver, a buyer or
+supplier who is a person, an individual entrepreneur) appears as a person
+reference, `pid_` followed by letters and digits. Claude, and any app
+connected to `https://waybill.ge/mcp`, sees the TIN as the connected system
+holds it, except where a tool masks it (bank transactions, below).
+
+When an answer does show a person reference:
+
+- Pass it back exactly as you got it wherever a tool asks for that
+  person's TIN (`buyer_tin`, `driver_tin`, `counterparty_tin` and the
+  rest), and use it as is to match the same person across answers. A
+  company keeps its 9-digit TIN.
+- Never ask the user to type a personal ID number there. A tool refuses
+  one with `INVALID_FIELD` (reason `personal_id_not_accepted`, and
+  `field` names the argument), and it refuses a reference in any other
+  field.
+- To name a driver, take the reference from `list_active_drivers` or an
+  earlier waybill. Someone who is not yet in the company's records (a new
+  driver or a new individual buyer) is entered at RS.GE first; say so
+  rather than guessing.
+- A reference refused as not valid (reason `person_reference_invalid`) is
+  out of date: read the record again and use the reference it gives now.
+
+## Two people with the same name
+
+When a name the user gives matches more than one person (two drivers, two
+individual buyers, two bank counterparties), never pick one. Show them side
+by side, each with its TIN or person reference and what tells them apart
+(for a driver the vehicle and trips from `list_active_drivers`, for a bank
+row the IBAN, otherwise the last waybill or invoice with that person), and
+ask which one is meant.
+
 ## Balance.ge is read-only
 
 The Balance.ge tools only read data. Nothing is ever posted to or
@@ -229,12 +273,22 @@ for them.
   `procredit`) or a `connection` label. Without either, the answer asks which bank,
   because each bank keeps its own default connection. If exactly one
   connection across those banks is marked default, that one is read
-  instead. Every answer's `bank` field says which bank was read, so name
-  that bank to the user.
+  instead. `bank_list_transactions` is the exception: without `bank`,
+  `connection` and `account` it searches every bank, and an `account`
+  (IBAN) alone is read at its own bank. Every answer's `bank` field says
+  which bank was read (null when several were; each transaction then has
+  its own `bank`), so name the bank to the user.
 - Pass a label from `bank_list_connections` as `connection` when the
-  user has more than one. `bank_list_transactions` and
-  `bank_statement_summary` read one selected account over at most 31
-  days. Transaction amounts are positive; `direction` gives the sign.
+  user has more than one. `bank_list_transactions` reads one account, or
+  every selected account of the connection it reads when `account` and
+  `currency` are left out, so "payments from TIN X last month" is one
+  call. Searching every bank reads each bank at the connection it reads
+  by default; pass `connection` for another one. `accounts` lists what
+  was read, and `errors` any account or bank that could not be (then
+  `complete` is false; tell the user which). `bank_statement_summary`
+  reads one account; when several match, `remediation.accounts` lists
+  them to choose from. Each call covers at most 31 days. Transaction
+  amounts are positive; `direction` gives the sign.
 - Each transaction has `amount_gel`, the amount in lari (`fx_source`
   says whether it is the bank's own figure or the National Bank of
   Georgia's rate for the day), and a `type`: incoming_transfer,
@@ -245,6 +299,23 @@ for them.
   leave out the payee's TIN on money out. `tin_coverage` counts the
   payments that lack it and `tin_note` says so; match those by
   `counterparty_iban` or name before calling anything unpaid.
+- `is_own_company: true` marks money moved between the user's own
+  accounts, including to its own account at another bank, and payments
+  between two companies connected to the same waybill.ge account.
+  A move is marked when the bank books it as an internal transfer, the
+  other account is selected in one of the user's bank connections, or the
+  other side's TIN is the user's company's. A move to an own account that
+  is not selected, with no TIN, stays unmarked: match it by
+  `counterparty_iban` or name before calling it income or spending.
+  A move between one company's own accounts is not income or spending:
+  `own_company="exclude"` leaves out every marked move, `only` keeps
+  just them, and `totals` then gives money in and out per currency. When
+  the user asks about one of several connected companies, a payment to
+  or from the other one is real income or spending for it: check
+  `counterparty_tin` before leaving it out. A statement summary's
+  `credit_sum` and `debit_sum` include them. `payer_tin` is
+  only a third party who paid on someone's behalf, never the user's own
+  company.
 - What a bank's statements can do is in `capabilities` from
   `bank_list_connections`. Bank of Georgia's statement summary does not
   cover today: when it returns `covered_to` and a `note`, use
