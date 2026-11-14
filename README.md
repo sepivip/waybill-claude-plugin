@@ -35,9 +35,12 @@ rates, in plain language.
   prepares the correction, shows the old and new lines and the VAT
   change, and sends it only after you confirm. This is also how a
   waybill that already has an invoice is fixed.
-- **Balance.ge accounting (read-only):** clients and vendors, items,
-  stock levels, prices, who owes you and whom you owe, the general
-  ledger and monthly cash flow. Nothing is ever posted to your ledger.
+- **Balance.ge accounting (read-only):** clients and vendors, items
+  (found by code, barcode or name), stock levels, prices, the fixed-asset
+  register (where each asset is and who holds it), sales, returns,
+  purchases and transfers (a sale's lines and its RS.GE waybill), who owes
+  you and whom you owe, the general ledger and monthly cash flow. Nothing
+  is ever posted to your ledger.
 - **QuickShipper deliveries (read-only):** live delivery quotes for a
   route, your recent orders by date or status, and one order's status
   history and tracking link. Nothing is booked, changed or cancelled.

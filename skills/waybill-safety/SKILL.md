@@ -210,8 +210,8 @@ holds it, except where a tool masks it (bank transactions, below).
 When an answer does show a person reference:
 
 - Pass it back exactly as you got it wherever a tool asks for that
-  person's TIN (`buyer_tin`, `driver_tin`, `counterparty_tin` and the
-  rest), and use it as is to match the same person across answers. A
+  person's TIN (`buyer_tin`, `driver_tin`, `list_invoices`' `counterparty_tin`
+  and the rest), and use it as is to match the same person across answers. A
   company keeps its 9-digit TIN.
 - Never ask the user to type a personal ID number there. A tool refuses
   one with `INVALID_FIELD` (reason `personal_id_not_accepted`, and
@@ -223,6 +223,14 @@ When an answer does show a person reference:
   rather than guessing.
 - A reference refused as not valid (reason `person_reference_invalid`) is
   out of date: read the record again and use the reference it gives now.
+- Looking a person up, or searching for one, by their ID is not offered
+  there: `lookup_taxpayer_info`, `lookup_name_by_tin` and the
+  `counterparty_tin` filter of `bank_list_transactions` take a company's
+  9-digit code only, and refuse a person reference too (reason
+  `person_lookup_not_offered`). Find a person's payments by
+  `counterparty_name` or `text` and tell people apart by IBAN; for a
+  person's taxpayer details, send the user to RS.GE. On
+  `https://waybill.ge/mcp` these tools still take a personal ID number.
 
 ## Two people with the same name
 
@@ -242,6 +250,49 @@ If `balance_list_companies` marks a company `needs_repair: true`, do
 not pass its label to any other Balance tool and do not run
 `balance_check_credentials` on it. Tell the user to disconnect it and
 connect the right company again under Business integrations.
+
+Pass an item, warehouse, branch or price type the way the user named it:
+a code (leading zeros optional), a barcode or the exact name works as a
+filter. If the answer says `reason: ambiguous`, show the candidates and
+ask which one is meant; never pick one yourself. `reason: lookup_loading`
+means the company's item list is still loading after a restart: ask
+again after `retry_after_seconds` instead of paging through every item.
+An answer with `complete: false` came from Balance itself because our
+list could not answer (exact names, articles, external codes and tax IDs
+only): tell the user it may be partial and what its `note` says. With
+`retry_after_seconds`, ask again after it for a code, a barcode or part
+of a name; without it the list is too large to search, so follow the note.
+An empty price list carries a `prices_note`; say what it says, and never
+report a missing price as zero. Any Balance read that finds nothing is
+`ok` with `count: 0` and a `note`: report what the note says, not a
+failure.
+
+`balance_fetch_general_ledger` reads up to a year one page at a time.
+While `next_cursor` is not null, call again with the same arguments and
+`cursor` set to it, and add amounts up only once `next_cursor` is null
+(`complete: true`); a partial walk is not a total. A `CurrencyCode` of
+null with `currency_unknown: true`, on a posting, a price or a balance,
+means Balance's books do not name the currency: say it is unknown, never
+guess it from the amounts. Find a client or vendor by part of its name
+with `name` on `balance_list_clients` or `balance_list_vendors`.
+
+Find a product with `balance_find_item` (code, barcode or name) before
+reading its stock or price. Equipment a company capitalised (vehicles,
+forklifts, fridges) leaves stock for the fixed-asset register, so when
+an item shows no stock or the user asks where a machine is, search
+`balance_list_fixed_assets` (a code, an inventory number or any part of
+the name, which finds a serial number). An asset's `Warehouse` and
+`ResponsiblePerson` are where it is now and who holds it. Balance's API
+has no movement history, book value or serial field for an asset: say
+so and point to Balance's own fixed-asset report rather than guess.
+
+Read sales, sales returns, purchases and transfers between warehouses
+with `balance_list_documents` (a date range, a page at a time) and one
+in full with `balance_get_document`. A sale's `WaybillID` is the number
+printed on its RS.GE waybill: open it with `get_waybill(number=...)`,
+never as `waybill_id`. Purchases come as totals only: say Balance's API
+has no purchase lines. Document numbers repeat across years, so on
+`reason: ambiguous` narrow by date or use the uid.
 
 ## Banks are read-only
 
@@ -390,6 +441,9 @@ when the user has more than one.
 - `onesoft_list_contracts` needs one counterparty's `ref_key` from
   `onesoft_list_clients` or `onesoft_list_vendors`. Its rows may be
   trading points or delivery routes rather than signed agreements.
+- `onesoft_get_document` takes a document `number` as well as a
+  `ref_key`. When its answer lists `candidates` (two documents share the
+  number), show them and ask which one is meant; never pick one yourself.
 - In 1C balances `advances` is negative and `net` is `debt + advances`;
   never subtract advances from debt.
 - If `onesoft_check_connection` reports `NOT_PUBLISHED` or
