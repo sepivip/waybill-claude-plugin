@@ -273,7 +273,13 @@ While `next_cursor` is not null, call again with the same arguments and
 (`complete: true`); a partial walk is not a total. A `CurrencyCode` of
 null with `currency_unknown: true`, on a posting, a price or a balance,
 means Balance's books do not name the currency: say it is unknown, never
-guess it from the amounts. Find a client or vendor by part of its name
+guess it from the amounts. For one item's postings pass `item` (the
+same codes, barcodes and names as the stock tools), and for one
+analytic text, such as an expense line or a fixed asset as "Name,
+Code", pass `analytic`: Balance cannot filter on either, so waybill.ge
+reads the range and keeps the matches. When `shared_name_note` says
+several items share the name, say the postings may belong to any of
+them. Find a client or vendor by part of its name
 with `name` on `balance_list_clients` or `balance_list_vendors`.
 
 Find a product with `balance_find_item` (code, barcode or name) before
@@ -285,6 +291,10 @@ the name, which finds a serial number). An asset's `Warehouse` and
 `ResponsiblePerson` are where it is now and who holds it. Balance's API
 has no movement history, book value or serial field for an asset: say
 so and point to Balance's own fixed-asset report rather than guess.
+`ResidualValue` is the salvage value, not the book value, and `State`
+can still say in operation after a sale or write-off. Its purchase,
+depreciation and disposal postings come from
+`balance_fetch_general_ledger` with `analytic` set to "Name, Code".
 
 Read sales, sales returns, purchases and transfers between warehouses
 with `balance_list_documents` (a date range, a page at a time) and one
