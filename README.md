@@ -38,8 +38,8 @@ rates, in plain language.
 - **Balance.ge accounting (read-only):** clients and vendors, items
   (found by code, barcode or name), stock levels, prices, the fixed-asset
   register (where each asset is and who holds it), sales, returns,
-  purchases and transfers (a sale's lines and its RS.GE waybill), who owes
-  you and whom you owe, the general ledger and monthly cash flow. Nothing
+  purchases and transfers (a sale's lines and its RS.GE waybill), an
+  item's movement history by date, who owes you and whom you owe, the general ledger and monthly cash flow. Nothing
   is ever posted to your ledger.
 - **QuickShipper deliveries (read-only):** live delivery quotes for a
   route, your recent orders by date or status, and one order's status
