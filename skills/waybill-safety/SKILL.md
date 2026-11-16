@@ -283,7 +283,17 @@ them. Find a client or vendor by part of its name
 with `name` on `balance_list_clients` or `balance_list_vendors`.
 
 Find a product with `balance_find_item` (code, barcode or name) before
-reading its stock or price. Equipment a company capitalised (vehicles,
+reading its stock or price. Balance sends no zero stock: when an item
+shows none, read `balance_get_stocks` with the item and
+`include_zero=true`, and always read and report its `zero_stock_note`.
+A zero row carries the item's `last_movement`: give it as the latest
+movement (date, kind, document number), not as proof of where the stock
+went, and pass on every doubt the note raises (another item may share
+the name, `movement_name_shared`; a reversal; any warehouse). When it is
+null, the note says why: no movement in the dates in `movement_searched`,
+or a read that failed (then the movement is unknown). When no zero row
+comes back because the search settings could not be read, the stock is
+unknown: say so, never "sold out". Never guess. Equipment a company capitalised (vehicles,
 forklifts, fridges) leaves stock for the fixed-asset register, so when
 an item shows no stock or the user asks where a machine is, search
 `balance_list_fixed_assets` (a code, an inventory number or any part of
