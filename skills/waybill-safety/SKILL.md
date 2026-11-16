@@ -294,6 +294,19 @@ never as `waybill_id`. Purchases come as totals only: say Balance's API
 has no purchase lines. Document numbers repeat across years, so on
 `reason: ambiguous` narrow by date or use the uid.
 
+For "when did X last move?", "who bought the last X?" or "where did it
+go?", read `balance_item_movements` (the item by code, barcode, name or
+uid, and a date range): its movements come newest first, a page at a
+time, from the ledger. While `next_cursor` is not null the range is not
+fully read: older days remain unread and may hold no movements, and a
+short or empty page can still carry a cursor. Read until `next_cursor`
+is null before saying the item did not move. A movement's
+`from_warehouse`/`to_warehouse` are named only for sales, returns and
+transfers: say the ledger names no warehouse for the rest rather than
+guess. When `name_shared_with` or `name_note` is present, another item
+may have the same name: rows with `item_verified: null` may belong to
+either, so say so.
+
 ## Banks are read-only
 
 The `bank_*` tools only read the balances and statements of the Bank of
