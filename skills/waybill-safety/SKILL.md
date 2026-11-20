@@ -146,13 +146,24 @@ not record who, never guess a person.
 One invoice for several waybills, or for a waybill's goods plus
 services such as labour, a call-out or transport: use
 `save_invoice_from_waybills` with the waybill numbers and the
-`extra_lines`. It saves a draft only. Show the user every line with its
-`source` (waybill or extra) and the total, then get a yes before
-`send_invoice`. To add a reference number to a line name, or to add or
+`extra_lines`. Call it first with `validate_only` true: that saves
+nothing and returns the lines, VAT and totals it would save, so show
+them and get a yes before saving. It saves a draft only. Show the user
+every line with its `source` (waybill or extra) and the total, then get
+a yes before `send_invoice`. If a save is refused with
+`waybill_already_invoiced` after a timeout, that names the invoice the
+waybill is bound to, most likely the draft the lost call left;
+`empty_draft_exists` names candidate drafts (another save may have left
+them). Either way, read the invoice with `get_invoice`, show it, and pass
+its id as `invoice_id` only once the user agrees it is this one: a save
+with `invoice_id` replaces that invoice's lines and waybills. After a timeout
+with no draft named, wait two minutes or check `list_invoices` before
+saving again. To add a reference number to a line name, or to add or
 remove a line on a saved invoice, use `update_invoice_lines` and show
 the lines before and after. `get_invoice` with `line_sources` true says
 which lines match the bound waybills' goods. Those sources are derived
-by matching names, not RS.GE's record, so say so.
+by matching names (and, for a renamed line, quantity and amount), not
+RS.GE's record, so say so.
 
 ## Name the RS.GE company
 

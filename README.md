@@ -257,9 +257,10 @@ reconnect, or start a new session.
     > Invoice waybill 1011410902 and add 2 hours of labour at 120 GEL and a
     > 50 GEL call-out, both with VAT. Put order PO-118 on the first line.
 
-    Claude saves one draft invoice with the waybill's goods and the two
-    service lines, bound to the waybill, and shows you every line, where
-    it came from and the total. It renames the first line, and sends the
+    Claude first checks the invoice without saving anything and shows
+    you every line, where it came from, its VAT and the total. On your
+    yes it saves one draft invoice with the waybill's goods and the two
+    service lines, bound to the waybill. It renames the first line, and sends the
     invoice to the buyer only after you confirm.
 
 ## Links
