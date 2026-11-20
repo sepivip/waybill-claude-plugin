@@ -151,9 +151,9 @@ For petroleum special invoices (სპეც-ანგარიშ-ფაქტ�
 `list_seller_special_invoices` for issued records and
 `list_buyer_special_invoices` for received records. Use dates, status
 filters and pagination, then read the goods with `get_special_invoice`
-and the returned `invoice_id`. Show the company names and TINs as returned,
-including any masked personal IDs. Use the customs or source special invoice
-references RS.GE supplies.
+and the returned `invoice_id`. Show company names and tax identifiers as
+returned. Use the customs or source special invoice references RS.GE
+supplies.
 
 To find an e-invoice, call `list_invoices` with what you know: the
 counterparty's TIN or name, the RS.GE number, dates or the amount. Then

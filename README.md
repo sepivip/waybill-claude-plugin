@@ -33,7 +33,7 @@ rates, in plain language.
   for a prepayment or a regular invoice without a waybill, send it to
   the buyer after you confirm, and complete an advance by offsetting its
   VAT against the final invoice. Correct an invoice you already sent (a
-  new price or quantity, returned goods, a cancelled operation): Claude
+  new price or quantity, returned goods, a canceled operation): Claude
   prepares the correction, shows the old and new lines and the VAT
   change, and sends it only after you confirm. This is also how a
   waybill that already has an invoice is fixed.
@@ -45,7 +45,7 @@ rates, in plain language.
   is ever posted to your ledger.
 - **QuickShipper deliveries (read-only):** live delivery quotes for a
   route, your recent orders by date or status, and one order's status
-  history and tracking link. Nothing is booked, changed or cancelled.
+  history and tracking link. Nothing is booked, changed or canceled.
 - **1C accounting (read-only):** your own 1C publication (for example one
   hosted by OneSoft): items, customers and suppliers, a counterparty's
   contracts, stock, prices, receivables and payables, cash, exchange
@@ -189,7 +189,7 @@ reconnect, or start a new session.
 6. **QuickShipper orders this month**
 
    > How many QuickShipper orders did we send this month, and how many
-   > were cancelled?
+   > were canceled?
 
    Claude reads the counts from QuickShipper; nothing is booked or changed.
 
