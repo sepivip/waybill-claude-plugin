@@ -1,6 +1,6 @@
 ---
 name: waybill-safety
-description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, TBC Bank, ProCredit Bank, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, send_waybill_to_transporter, confirm_waybill, correct_waybill, save_invoice_from_waybill, correct_invoice, send_invoice or attach_advance_invoice, confirm saved-draft edits before update_waybill_draft and activation, find e-invoices with list_invoices instead of stepping through ids, sum a month's VAT with vat_period_summary, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the bank tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper, 1C or bank passwords or API keys in chat.
+description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, TBC Bank, ProCredit Bank, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, send_waybill_to_transporter, confirm_waybill, correct_waybill, save_invoice_from_waybill, save_invoice_from_waybills, update_invoice_lines, correct_invoice, send_invoice or attach_advance_invoice, confirm saved-draft edits before update_waybill_draft and activation, find e-invoices with list_invoices instead of stepping through ids, sum a month's VAT with vat_period_summary, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the bank tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper, 1C or bank passwords or API keys in chat.
 ---
 
 # waybill.ge safety
@@ -30,6 +30,14 @@ happen and obtain an explicit "yes" (or an equally clear instruction):
 - `save_invoice_from_waybill`: creates an RS.GE invoice from a waybill,
   or rewrites the waybill's own saved invoice when its `in_inv_id` is
   given (the tool refuses any other invoice, and one already sent).
+- `save_invoice_from_waybills`: saves an invoice draft for the goods on
+  one or more waybills plus extra lines that were not on a waybill
+  (labour, a call-out, transport), or rewrites a saved invoice when its
+  `invoice_id` is given. Show the waybills, every line with its source
+  (waybill or extra), the extras total and the invoice total.
+- `update_invoice_lines`: renames, changes, adds or deletes lines of a
+  saved (unsent) invoice. Show each changed line before and after, the
+  added and removed lines, and the new total.
 - `correct_invoice`: prepares a correction of an e-invoice the company
   already sent (a new price or quantity, goods returned, a changed or
   cancelled operation). It is saved unsent, and an invoice has one
@@ -134,6 +142,17 @@ when and by whom, use `get_waybill_corrections`; it only reads. RS.GE
 names who corrected only for corrections made through its API; for one
 made on the RS.GE website `corrected_by` is empty, so say that RS.GE does
 not record who, never guess a person.
+
+One invoice for several waybills, or for a waybill's goods plus
+services such as labour, a call-out or transport: use
+`save_invoice_from_waybills` with the waybill numbers and the
+`extra_lines`. It saves a draft only. Show the user every line with its
+`source` (waybill or extra) and the total, then get a yes before
+`send_invoice`. To add a reference number to a line name, or to add or
+remove a line on a saved invoice, use `update_invoice_lines` and show
+the lines before and after. `get_invoice` with `line_sources` true says
+which lines match the bound waybills' goods. Those sources are derived
+by matching names, not RS.GE's record, so say so.
 
 ## Name the RS.GE company
 
