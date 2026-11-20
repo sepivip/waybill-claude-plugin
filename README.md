@@ -36,7 +36,11 @@ rates, in plain language.
   new price or quantity, returned goods, a canceled operation): Claude
   prepares the correction, shows the old and new lines and the VAT
   change, and sends it only after you confirm. This is also how a
-  waybill that already has an invoice is fixed.
+  waybill that already has an invoice is fixed. Invoice several waybills
+  at once, or a waybill's goods together with services such as labour,
+  a call-out or transport, and rename, add or remove lines on a saved
+  invoice (for example to add the client's order number) before it is
+  sent.
 - **Balance.ge accounting (read-only):** clients and vendors, items
   (found by code, barcode or name), stock levels, prices, the fixed-asset
   register (where each asset is and who holds it), sales, returns,
@@ -247,6 +251,16 @@ reconnect, or start a new session.
     with the new price. It shows you the old and new lines and the VAT
     change and saves the correction only after you confirm; it sends it
     to the buyer only after a second yes.
+
+13. **Invoice a waybill's parts together with the labour**
+
+    > Invoice waybill 1011410902 and add 2 hours of labour at 120 GEL and a
+    > 50 GEL call-out, both with VAT. Put order PO-118 on the first line.
+
+    Claude saves one draft invoice with the waybill's goods and the two
+    service lines, bound to the waybill, and shows you every line, where
+    it came from and the total. It renames the first line, and sends the
+    invoice to the buyer only after you confirm.
 
 ## Links
 
