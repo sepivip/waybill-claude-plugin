@@ -26,7 +26,9 @@ rates, in plain language.
   what was corrected on a waybill, when and (where RS.GE records it) by
   whom.
 - **RS.GE special invoices:** view issued and received invoices for petroleum
-  products, including fuel and bitumen, with their goods and amounts.
+  products, including fuel and bitumen, with their goods and amounts. As
+  the buyer, confirm or reject (with a reason) an invoice a supplier sent,
+  or confirm the supplier's cancellation, after you confirm the action.
 - **RS.GE e-invoices:** find invoices you issued or received by
   counterparty, date, RS.GE number or amount, add up a month's output
   and input VAT in one step, issue an advance invoice

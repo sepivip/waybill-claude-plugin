@@ -1,6 +1,6 @@
 ---
 name: waybill-safety
-description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, TBC Bank, ProCredit Bank, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, send_waybill_to_transporter, confirm_waybill, correct_waybill, save_invoice_from_waybill, save_invoice_from_waybills, update_invoice_lines, correct_invoice, send_invoice or attach_advance_invoice, confirm saved-draft edits before update_waybill_draft and activation, find e-invoices with list_invoices instead of stepping through ids, sum a month's VAT with vat_period_summary, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the bank tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper, 1C or bank passwords or API keys in chat.
+description: Use whenever you work with the waybill.ge MCP tools (RS.GE waybills, e-invoices, Balance.ge, QuickShipper, 1C (OneSoft), Bank of Georgia, TBC Bank, ProCredit Bank, the NAPR public registry or NBG exchange rates). Show a waybill or e-invoice draft and get an explicit yes before activate_waybill, close_waybill, send_waybill_to_transporter, confirm_waybill, correct_waybill, save_invoice_from_waybill, save_invoice_from_waybills, update_invoice_lines, correct_invoice, send_invoice, attach_advance_invoice, confirm_special_invoice, reject_special_invoice or confirm_special_invoice_cancellation, confirm saved-draft edits before update_waybill_draft and activation, find e-invoices with list_invoices instead of stepping through ids, sum a month's VAT with vat_period_summary, treat QuickShipper quotes as prices rather than bookings, keep 1C trial balance windows narrow, remember that the bank tools only read and never move money, never search the public registry for people or report a guess when NAPR or NBG is unavailable, and never ask for RS.GE, Balance.ge, QuickShipper, 1C or bank passwords or API keys in chat.
 ---
 
 # waybill.ge safety
@@ -48,6 +48,17 @@ happen and obtain an explicit "yes" (or an equally clear instruction):
   it cannot be unsent.
 - `attach_advance_invoice`: offsets an advance invoice's VAT against a
   supply invoice, which changes the VAT that invoice charges.
+- `confirm_special_invoice`: confirms a petroleum special invoice
+  (სპეც-ანგარიშ-ფაქტურა) a supplier sent to the company, or a sent
+  correction of one. It is a tax act the buyer cannot undo. Call it with
+  `validate_only: true` first and show the seller, number, operation
+  date, amount and VAT.
+- `reject_special_invoice`: rejects a received special invoice with a
+  reason the seller sees. Call it with `validate_only: true` first and
+  show the invoice and the exact reason.
+- `confirm_special_invoice_cancellation`: confirms the seller's
+  cancellation of a received special invoice. Call it with
+  `validate_only: true` first and show the invoice.
 - `save_advance_invoice` or `save_supply_invoice` with a non-zero
   `invoice_id`: rewrites an existing saved invoice and replaces all its
   lines.
@@ -183,7 +194,8 @@ For petroleum special invoices (სპეც-ანგარიშ-ფაქტ�
 filters and pagination, then read the goods with `get_special_invoice`
 and the returned `invoice_id`. Show company names and tax identifiers as
 returned. Use the customs or source special invoice references RS.GE
-supplies.
+supplies. On a received invoice, `buyer_actions` names what the buyer
+can still do; issuing a special invoice still happens on eservices.rs.ge.
 
 To find an e-invoice, call `list_invoices` with what you know: the
 counterparty's TIN or name, the RS.GE number, dates or the amount. Then
