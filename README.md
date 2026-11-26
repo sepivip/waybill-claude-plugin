@@ -84,7 +84,7 @@ rates, in plain language.
   not people.
 
 The plugin adds one remote MCP server, `waybill`, at
-`https://waybill.ge/mcp`, and a small `waybill-safety` skill. The skill
+`https://waybill.ge/mcp`, and two skills. The `waybill-safety` skill
 has Claude show you a waybill or e-invoice draft and wait for an
 explicit yes before editing a saved draft or a binding RS.GE action (activate, close, correct,
 send to a transporter, confirm, create invoice, correct or send an
@@ -94,7 +94,13 @@ narrow, treat the bank tools as read-only, never search the
 public registry for people or report a guess when a public source is
 down, and never ask for your RS.GE, Balance.ge, QuickShipper or 1C
 passwords, your Bank of Georgia or TBC Bank API key or your ProCredit
-Bank service user's password in chat.
+Bank service user's password in chat. A second skill, `waybill-setup`,
+helps you sign in, connect a system and fix a connection that stopped
+working.
+
+The waybill.ge server serves the same two skills itself, to apps that load
+skills from MCP servers (Skills over MCP, in beta in Claude and Claude
+Code), so you get them without the plugin too.
 
 ## Install
 
