@@ -128,7 +128,10 @@ Sign-in is OAuth. The plugin contains no API keys, tokens or passwords.
 2. Your browser opens waybill.ge. Sign in with your email (a one-time
    code) and approve access.
 3. In the waybill.ge dashboard, connect your RS.GE service user and,
-   if you use them, your Balance.ge companies, QuickShipper accounts,
+   if you use them, your Balance.ge companies (turn on web-service export
+   and create a separate Balance.ge user first; the
+   [Balance.ge setup guide](https://waybill.ge/dashboard/integrations/balance/setup)
+   shows each step and where the 4-digit App ID is), QuickShipper accounts,
    1C publications (with a dedicated read-only 1C user; the
    [1C setup guide](https://waybill.ge/dashboard/integrations/onesoft/setup)
    lists the one-time steps inside 1C) and bank accounts. For Bank of
