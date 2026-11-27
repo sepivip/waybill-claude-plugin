@@ -108,6 +108,18 @@ invoice id) and ask whether to send it. To complete an advance, find it
 with `list_attachable_advance_invoices`, save the supply invoice, then
 ask before `attach_advance_invoice` and again before `send_invoice`.
 
+An invoice comment (კომენტარი), such as the client's invoice or quote
+number or the euro rate, goes in `note` on the call that creates the
+invoice (`save_supply_invoice`, `save_invoice_from_waybills` or
+`save_invoice_from_waybill`), and the buyer sees it. Show it with the
+draft. RS.GE keeps a comment only from that first save: it cannot be
+added or changed afterwards, and an advance invoice cannot carry one.
+A comment holds at most 500 bytes: about 166 Georgian letters, or up to
+500 Latin letters, digits and spaces (`note_too_long` otherwise).
+When a save fails with `note_not_saved`, the draft exists but lacks the
+requested comment (RS.GE dropped it or stored a different one): tell the
+user to delete it on eservices.rs.ge and save again.
+
 Without a clear instruction for the displayed action, do not call the
 tool. Offer to prepare revised details instead.
 
@@ -167,7 +179,12 @@ waybill is bound to, most likely the draft the lost call left;
 `empty_draft_exists` names candidate drafts (another save may have left
 them). Either way, read the invoice with `get_invoice`, show it, and pass
 its id as `invoice_id` only once the user agrees it is this one: a save
-with `invoice_id` replaces that invoice's lines and waybills. After a timeout
+with `invoice_id` replaces that invoice's lines and waybills. If the lost
+call carried a `note`, reuse the draft (without `note`) only when
+`get_invoice` shows its `note` exactly as sent; a different comment
+means deleting the draft on eservices.rs.ge and saving again. A null
+`note` can also be a failed read, so check eservices.rs.ge before
+advising a delete. After a timeout
 with no draft named, wait two minutes or check `list_invoices` before
 saving again. To add a reference number to a line name, or to add or
 remove a line on a saved invoice, use `update_invoice_lines` and show
